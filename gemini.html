@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Quản Lý Phòng Trọ 3D</title>
+  <title>Hệ Thống Quản Lý Phòng Trọ 3D - 2 Khu</title>
   <style>
     * {
       box-sizing: border-box;
@@ -17,39 +17,70 @@
       color: #1e293b;
     }
 
-    /* Top Banner / Dòng chữ tiêu đề chính giữa phía trên */
-    .header-banner {
+    /* NHÃN KHU TO Ở GÓC TRÊN BÊN TRÁI */
+    .zone-title-badge {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 12px 28px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border: 2px solid #2563eb;
+      font-size: 26px;
+      font-weight: 900;
+      color: #1e293b;
+      letter-spacing: 0.5px;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    /* Tab Switcher Chuyển Đổi Khu 1 / Khu 2 */
+    .header-tabs {
       position: absolute;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(12px);
-      padding: 12px 32px;
+      padding: 6px;
       border-radius: 40px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.8);
-      text-align: center;
+      display: flex;
+      gap: 8px;
       z-index: 10;
     }
-    .header-banner h1 {
-      font-size: 22px;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: 0.5px;
-    }
-    .header-banner p {
-      font-size: 13px;
+    .tab-btn {
+      padding: 10px 28px;
+      border-radius: 30px;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 700;
       color: #64748b;
-      margin-top: 2px;
-      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .tab-btn:hover {
+      color: #0f172a;
+    }
+    .tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
-    /* 3D Canvas */
+    /* 3D Canvas với hiệu ứng Fade Chuyển Khu */
     #canvas-container {
       width: 100vw;
       height: 100vh;
       display: block;
+      transition: opacity 0.35s ease-in-out;
+    }
+    #canvas-container.fading {
+      opacity: 0.2;
     }
 
     /* Detail Card Panel bên phải */
@@ -192,10 +223,13 @@
 </head>
 <body>
 
-  <!-- Dòng chữ tiêu đề ở trên chính giữa màn hình -->
-  <div class="header-banner">
-    <h1>Thuê Trọ Giá Rẻ - Khu Chung Cư Mini</h1>
-    <p>Chọn phòng để xem thông tin chi tiết</p>
+  <!-- BẢNG NHÃN KHU TO GÓC TRÊN BÊN TRÁI -->
+  <div class="zone-title-badge" id="zone-display-title">Khu 1</div>
+
+  <!-- Thanh Chuyển Đổi Khu 1 / Khu 2 -->
+  <div class="header-tabs">
+    <button class="tab-btn active" id="tab-zone1" onclick="switchZone(1)">Khu 1</button>
+    <button class="tab-btn" id="tab-zone2" onclick="switchZone(2)">Khu 2</button>
   </div>
 
   <div id="canvas-container"></div>
@@ -207,7 +241,7 @@
       <button class="close-btn" id="close-card">✕</button>
     </div>
     <div class="room-title" id="card-room-id">P205</div>
-    <div class="room-floor" id="card-room-floor">Tầng 2</div>
+    <div class="room-floor" id="card-room-floor">Tầng 2 - Khu 1</div>
     
     <div class="status-badge" id="card-room-status">Đã thuê</div>
     
@@ -241,8 +275,16 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xe6f0fa);
 
+    const floors = 5;
+    const roomsPerFloor = 10;
+    const roomWidth = 4.5;
+    const roomHeight = 3.4;
+    const buildingWidth = roomsPerFloor * roomWidth; // 45m
+    const buildingHeight = floors * roomHeight;      // 17m
+    const buildingDepth = 9;
+
     const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 4.2, 30);
+    camera.position.set(0, 11.5, 46);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -256,21 +298,20 @@
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2 - 0.01;
     controls.minDistance = 15;
-    controls.maxDistance = 50;
-
-    controls.target.set(0, 4.2, 0);
+    controls.maxDistance = 110;
+    controls.target.set(0, 11.5, 0);
 
     // --- 2. LIGHTING ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
     const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    sunLight.position.set(20, 30, 20);
+    sunLight.position.set(30, 50, 30);
     sunLight.castShadow = true;
     scene.add(sunLight);
 
     // --- 3. GROUND ---
-    const groundGeo = new THREE.PlaneGeometry(100, 100);
+    const groundGeo = new THREE.PlaneGeometry(180, 180);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0xebf2f7, roughness: 0.8 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -278,15 +319,7 @@
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // --- 4. BUILD BUILDING ---
-    const floors = 3;
-    const roomsPerFloor = 5;
-    const roomWidth = 3.6;
-    const roomHeight = 2.8;
-    const buildingWidth = roomsPerFloor * roomWidth;
-    const buildingHeight = floors * roomHeight;
-    const buildingDepth = 7;
-
+    // --- 4. BUILD BUILDING STRUCTURE ---
     const buildingGroup = new THREE.Group();
 
     // Thân tòa nhà
@@ -299,21 +332,21 @@
     buildingGroup.add(bodyMesh);
 
     // Cột viền 2 bên
-    const sideWallGeo = new THREE.BoxGeometry(0.3, buildingHeight, buildingDepth + 0.1);
+    const sideWallGeo = new THREE.BoxGeometry(0.5, buildingHeight, buildingDepth + 0.1);
     const sideWallMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
     const leftWall = new THREE.Mesh(sideWallGeo, sideWallMat);
-    leftWall.position.set(-buildingWidth / 2 - 0.15, buildingHeight / 2, 0);
+    leftWall.position.set(-buildingWidth / 2 - 0.25, buildingHeight / 2, 0);
     const rightWall = new THREE.Mesh(sideWallGeo, sideWallMat);
-    rightWall.position.set(buildingWidth / 2 + 0.15, buildingHeight / 2, 0);
+    rightWall.position.set(buildingWidth / 2 + 0.25, buildingHeight / 2, 0);
     buildingGroup.add(leftWall);
     buildingGroup.add(rightWall);
 
-    // Mái nhà chóp nghiêng
-    const roofHeight = 3.0;
+    // Mái nhà xám đen
+    const roofHeight = 4.5;
     const roofShape = new THREE.Shape();
-    roofShape.moveTo(-buildingWidth / 2 - 1.2, 0);
+    roofShape.moveTo(-buildingWidth / 2 - 1.5, 0);
     roofShape.lineTo(0, roofHeight);
-    roofShape.lineTo(buildingWidth / 2 + 1.2, 0);
+    roofShape.lineTo(buildingWidth / 2 + 1.5, 0);
     roofShape.closePath();
 
     const extrudeSettings = { depth: buildingDepth + 0.8, bevelEnabled: false };
@@ -324,120 +357,190 @@
     roofMesh.castShadow = true;
     buildingGroup.add(roofMesh);
 
-    // Gờ phân tầng
+    // Gờ phân tầng giữa các tầng
     for (let f = 1; f < floors; f++) {
-      const ledgeGeo = new THREE.BoxGeometry(buildingWidth + 0.2, 0.35, 0.5);
+      const ledgeGeo = new THREE.BoxGeometry(buildingWidth + 0.2, 0.4, 0.6);
       const ledgeMat = new THREE.MeshStandardMaterial({ color: 0x64748b });
       const ledge = new THREE.Mesh(ledgeGeo, ledgeMat);
-      ledge.position.set(0, f * roomHeight, buildingDepth / 2 + 0.25);
+      ledge.position.set(0, f * roomHeight, buildingDepth / 2 + 0.3);
       buildingGroup.add(ledge);
     }
 
-    // --- 5. ROOM BUTTONS WITH STATUS BADGES ---
-    const interactiveMeshes = [];
+    // Gờ móng tầng trệt
+    const baseLedgeGeo = new THREE.BoxGeometry(buildingWidth + 0.4, 0.4, 0.7);
+    const baseLedgeMat = new THREE.MeshStandardMaterial({ color: 0x334155 });
+    const baseLedge = new THREE.Mesh(baseLedgeGeo, baseLedgeMat);
+    baseLedge.position.set(0, 0.2, buildingDepth / 2 + 0.35);
+    buildingGroup.add(baseLedge);
 
-    const roomDetailsData = {
-      'P101': { floor: 'Tầng 1', status: 'Đã thuê', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: false },
-      'P102': { floor: 'Tầng 1', status: 'Đang trống', area: '25 m²', price: '2.600.000đ', type: 'Phòng đơn', furniture: 'Đầy đủ', available: true },
-      'P103': { floor: 'Tầng 1', status: 'Đã thuê', area: '30 m²', price: '3.000.000đ', type: 'Phòng đôi', furniture: 'Đầy đủ', available: false },
-      'P104': { floor: 'Tầng 1', status: 'Đang trống', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: true },
-      'P105': { floor: 'Tầng 1', status: 'Đã thuê', area: '28 m²', price: '2.800.000đ', type: 'Phòng đơn', furniture: 'Đầy đủ', available: false },
-
-      'P201': { floor: 'Tầng 2', status: 'Đã thuê', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: false },
-      'P202': { floor: 'Tầng 2', status: 'Đang trống', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: true },
-      'P203': { floor: 'Tầng 2', status: 'Đã thuê', area: '30 m²', price: '3.200.000đ', type: 'Phòng đôi', furniture: 'Đầy đủ', available: false },
-      'P204': { floor: 'Tầng 2', status: 'Đã thuê', area: '25 m²', price: '2.600.000đ', type: 'Phòng đơn', furniture: 'Đầy đủ', available: false },
-      'P205': { floor: 'Tầng 2', status: 'Đã thuê', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: false },
-
-      'P301': { floor: 'Tầng 3', status: 'Đang trống', area: '25 m²', price: '2.400.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: true },
-      'P302': { floor: 'Tầng 3', status: 'Đã thuê', area: '25 m²', price: '2.400.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: false },
-      'P303': { floor: 'Tầng 3', status: 'Đã thuê', area: '30 m²', price: '2.900.000đ', type: 'Phòng đôi', furniture: 'Cơ bản', available: false },
-      'P304': { floor: 'Tầng 3', status: 'Đang trống', area: '25 m²', price: '2.400.000đ', type: 'Phòng đơn', furniture: 'Cơ bản', available: true },
-      'P305': { floor: 'Tầng 3', status: 'Đã thuê', area: '25 m²', price: '2.500.000đ', type: 'Phòng đơn', furniture: 'Đầy đủ', available: false }
-    };
-
+    // Vách ngăn dọc giữa các phòng
+    const dividerMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
     for (let f = 0; f < floors; f++) {
-      for (let r = 0; r < roomsPerFloor; r++) {
-        const roomNum = (f + 1) * 100 + (r + 1);
-        const roomId = `P${roomNum}`;
-        const data = roomDetailsData[roomId];
-        
-        const x = (r - (roomsPerFloor - 1) / 2) * roomWidth;
-        const y = f * roomHeight + roomHeight / 2;
-        const z = buildingDepth / 2 + 0.05;
-
-        // Ô khung phòng
-        const roomFrameGeo = new THREE.PlaneGeometry(roomWidth - 0.4, roomHeight - 0.5);
-        const roomFrameMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, side: THREE.DoubleSide });
-        const roomMesh = new THREE.Mesh(roomFrameGeo, roomFrameMat);
-        roomMesh.position.set(x, y, z);
-
-        // VẼ CANVAS CÓ NHÃN TRẠNG THÁI (ĐANG TRỐNG / ĐÃ THUÊ)
-        const canvas = document.createElement('canvas');
-        canvas.width = 300;
-        canvas.height = 150;
-        const ctx = canvas.getContext('2d');
-
-        // 1. Khung nền đen bo góc
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 20);
-        ctx.fill();
-
-        // 2. Chữ Tên Phòng (P101, P102...)
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'Bold 46px -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(roomId, canvas.width / 2, canvas.height / 2 - 16);
-
-        // 3. Nhãn Trạng Thái (Thẻ màu phía dưới Tên Phòng)
-        const badgeWidth = 140;
-        const badgeHeight = 32;
-        const badgeX = (canvas.width - badgeWidth) / 2;
-        const badgeY = canvas.height / 2 + 22;
-
-        if (data.available) {
-          // Màu xanh lá nhãn "Đang trống"
-          ctx.fillStyle = '#16a34a';
-          ctx.beginPath();
-          ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 10);
-          ctx.fill();
-
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'Bold 20px -apple-system, sans-serif';
-          ctx.fillText('• Đang trống', canvas.width / 2, badgeY + badgeHeight / 2);
-        } else {
-          // Màu đỏ nhãn "Đã thuê"
-          ctx.fillStyle = '#e11d48';
-          ctx.beginPath();
-          ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 10);
-          ctx.fill();
-
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'Bold 20px -apple-system, sans-serif';
-          ctx.fillText('• Đã thuê', canvas.width / 2, badgeY + badgeHeight / 2);
-        }
-
-        const texture = new THREE.CanvasTexture(canvas);
-        const btnGeo = new THREE.PlaneGeometry(2.5, 1.25);
-        const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-        const btnMesh = new THREE.Mesh(btnGeo, btnMat);
-        btnMesh.position.set(0, 0, 0.05);
-        
-        roomMesh.add(btnMesh);
-
-        roomMesh.userData = { 
-          id: roomId, 
-          data: data 
-        };
-
-        interactiveMeshes.push(roomMesh);
-        buildingGroup.add(roomMesh);
+      for (let r = 1; r < roomsPerFloor; r++) {
+        const dividerGeo = new THREE.BoxGeometry(0.12, roomHeight - 0.5, 0.2);
+        const dividerMesh = new THREE.Mesh(dividerGeo, dividerMat);
+        const dividerX = (r - roomsPerFloor / 2) * roomWidth;
+        const dividerY = f * roomHeight + roomHeight / 2;
+        dividerMesh.position.set(dividerX, dividerY, buildingDepth / 2 + 0.1);
+        buildingGroup.add(dividerMesh);
       }
     }
 
     scene.add(buildingGroup);
+
+    // --- 5. QUẢN LÝ DỮ LIỆU & NÚT PHÒNG THEO KHU ---
+    let currentZone = 1;
+    let interactiveMeshes = [];
+
+    function generateZoneData(zoneId) {
+      const dataMap = {};
+      for (let f = 1; f <= floors; f++) {
+        for (let r = 1; r <= roomsPerFloor; r++) {
+          const roomNumStr = r < 10 ? `0${r}` : `${r}`;
+          const roomId = `P${f}${roomNumStr}`;
+          
+          const isAvailable = zoneId === 1 ? ((f + r) % 3 === 0) : ((f + r * 2) % 4 === 0);
+
+          dataMap[roomId] = {
+            floor: `Tầng ${f} - Khu ${zoneId}`,
+            status: isAvailable ? 'Đang trống' : 'Đã thuê',
+            area: zoneId === 1 ? '25 m²' : '30 m²',
+            price: `${(zoneId === 1 ? 2300000 : 2800000) + f * 100000}đ`,
+            type: r % 2 === 0 ? 'Phòng đôi' : 'Phòng đơn',
+            furniture: isAvailable ? 'Đầy đủ' : 'Cơ bản',
+            available: isAvailable
+          };
+        }
+      }
+      return dataMap;
+    }
+
+    function buildRoomButtons() {
+      interactiveMeshes.forEach(mesh => buildingGroup.remove(mesh));
+      interactiveMeshes = [];
+
+      const currentZoneData = generateZoneData(currentZone);
+
+      for (let f = 0; f < floors; f++) {
+        for (let r = 0; r < roomsPerFloor; r++) {
+          const roomNumStr = (r + 1) < 10 ? `0${r + 1}` : `${r + 1}`;
+          const roomId = `P${f + 1}${roomNumStr}`;
+          const data = currentZoneData[roomId];
+          
+          const x = (r - (roomsPerFloor - 1) / 2) * roomWidth;
+          const y = f * roomHeight + roomHeight / 2;
+          const z = buildingDepth / 2 + 0.05;
+
+          const roomFrameGeo = new THREE.PlaneGeometry(roomWidth - 0.5, roomHeight - 0.6);
+          const roomFrameMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, side: THREE.DoubleSide });
+          const roomMesh = new THREE.Mesh(roomFrameGeo, roomFrameMat);
+          roomMesh.position.set(x, y, z);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = 360;
+          canvas.height = 180;
+          const ctx = canvas.getContext('2d');
+
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 24);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'Bold 58px -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(roomId, canvas.width / 2, canvas.height / 2 - 20);
+
+          const badgeWidth = 170;
+          const badgeHeight = 38;
+          const badgeX = (canvas.width - badgeWidth) / 2;
+          const badgeY = canvas.height / 2 + 22;
+
+          if (data.available) {
+            ctx.fillStyle = '#16a34a';
+            ctx.beginPath();
+            ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 12);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'Bold 22px -apple-system, sans-serif';
+            ctx.fillText('• Đang trống', canvas.width / 2, badgeY + badgeHeight / 2);
+          } else {
+            ctx.fillStyle = '#e11d48';
+            ctx.beginPath();
+            ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 12);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'Bold 22px -apple-system, sans-serif';
+            ctx.fillText('• Đã thuê', canvas.width / 2, badgeY + badgeHeight / 2);
+          }
+
+          const texture = new THREE.CanvasTexture(canvas);
+          const btnGeo = new THREE.PlaneGeometry(3.6, 1.8);
+          const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+          const btnMesh = new THREE.Mesh(btnGeo, btnMat);
+          btnMesh.position.set(0, 0, 0.05);
+          
+          roomMesh.add(btnMesh);
+          roomMesh.userData = { id: roomId, data: data };
+
+          interactiveMeshes.push(roomMesh);
+          buildingGroup.add(roomMesh);
+        }
+      }
+    }
+
+    buildRoomButtons();
+
+    // HIỆU ỨNG CHUYỂN KHU MƯỢT MÀ (ROTATE & FADE)
+    let isTransitioning = false;
+
+    window.switchZone = function(zoneId) {
+      if (currentZone === zoneId || isTransitioning) return;
+      isTransitioning = true;
+      currentZone = zoneId;
+
+      // 1. Cập nhật giao diện nút Tab & Nhãn Tên Khu to ở góc trái
+      document.getElementById('tab-zone1').classList.toggle('active', zoneId === 1);
+      document.getElementById('tab-zone2').classList.toggle('active', zoneId === 2);
+      document.getElementById('zone-display-title').innerText = `Khu ${zoneId}`;
+
+      // 2. Đóng card chi tiết phòng
+      document.getElementById('detail-card').classList.remove('active');
+      if (selectedMesh) {
+        selectedMesh.material.color.setHex(0xd1d5db);
+        selectedMesh = null;
+      }
+
+      // 3. Hiệu ứng mờ đục Canvas
+      container.classList.add('fading');
+
+      // 4. Hiệu ứng Xoay nhẹ Tòa Nhà qua lại
+      const startRot = buildingGroup.rotation.y;
+      const targetRot = zoneId === 2 ? 0.35 : 0; // Xoay 1 góc nhẹ khi sang Khu 2
+      const startTime = performance.now();
+
+      function animateTransition(now) {
+        const elapsed = (now - startTime) / 1000;
+        const progress = Math.min(elapsed / 0.35, 1);
+        
+        buildingGroup.rotation.y = startRot + (targetRot - startRot) * progress;
+
+        if (progress < 1) {
+          requestAnimationFrame(animateTransition);
+        } else {
+          buildRoomButtons();
+          container.classList.remove('fading');
+          isTransitioning = false;
+        }
+      }
+
+      setTimeout(() => {
+        requestAnimationFrame(animateTransition);
+      }, 150);
+    };
 
     // --- 6. EVENT HANDLING ---
     const raycaster = new THREE.Raycaster();

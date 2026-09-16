@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cư xá - 165 Trần Phú</title>
+    <!-- Font chữ Montserrat & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== 1. RESET STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        /* ===== 2. BACKGROUND VIDEO FULL SCREEN ===== */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 2;
+        }
+
+        /* ===== 3. NAVIGATION HEADER BAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-logo {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .nav-logo i {
+            color: #ff4757;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00d2d3;
+            transform: translateY(-2px);
+        }
+
+        .nav-phone-btn {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 18px !important;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff !important;
+        }
+
+        .nav-phone-btn:hover {
+            background: #ff4757 !important;
+            border-color: #ff4757 !important;
+        }
+
+        /* ===== 4. MAIN CONTAINER ===== */
+        .main-container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 85px 20px 25px 20px;
+        }
+
+        /* ===== 5. MAIN TITLE ===== */
+        .header-title {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px 35px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-top: 10px;
+        }
+
+        /* ===== 6. KHU VỰC CHỨA COMMENT BẤT QUY TẮC ===== */
+        .comments-area {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 400px;
+            margin: auto 0;
+        }
+
+        /* Thẻ Comment 3D */
+        .bubble-3d {
+            position: absolute;
+            padding: 18px 32px;
+            border-radius: 30px;
+            background: #a29bfe; 
+            border: 3px solid #6c5ce7;
+            box-shadow: 0 10px 0px #4834d4, 0 15px 25px rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            font-size: 1.35rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            max-width: 85%;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+
+            opacity: 0;
+            transform: scale(0.5) rotate(0deg);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bubble-3d::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 35px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 20px 20px 0 0;
+            border-color: #a29bfe transparent transparent transparent;
+            filter: drop-shadow(0px 3px 0px #4834d4);
+        }
+
+        .bubble-3d.show {
+            opacity: 1;
+            transform: scale(1) rotate(var(--rot, 0deg));
+        }
+
+        /* Animation LẮC NHẸ rồi RỚT XUỐNG */
+        .bubble-3d.shake-drop {
+            animation: shakeAndDrop 0.6s forwards ease-in;
+        }
+
+        @keyframes shakeAndDrop {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.05) rotate(-6deg); }
+            40% { transform: scale(1.05) rotate(6deg); }
+            60% { transform: scale(1) rotate(-3deg); }
+            100% { 
+                opacity: 0;
+                transform: translateY(60px) scale(0.8) rotate(10deg);
+            }
+        }
+
+        /* ===== 7. ACTION BUTTONS STYLES ===== */
+        .action-buttons {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+            max-width: 650px;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .btn-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.05rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-booking {
+            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(255, 8, 68, 0.5), 0 4px 0px #b3002d;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-location {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.5), 0 4px 0px #1d4ed8;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn i {
+            font-size: 1.3rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: rotate(45deg);
+            transition: 0.8s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-booking:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(255, 8, 68, 0.8), 0 6px 0px #b3002d;
+            border-color: #ffffff;
+        }
+
+        .btn-location:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0, 210, 255, 0.8), 0 6px 0px #1d4ed8;
+            border-color: #ffffff;
+        }
+
+        .btn:hover i {
+            transform: scale(1.2) rotate(-8deg);
+        }
+
+        .btn:active {
+            transform: translateY(2px) scale(0.98) !important;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .btn-subtext {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 20px;
+            }
+            .nav-links li:not(:last-child) {
+                display: none;
+            }
+            .nav-logo {
+                font-size: 1.1rem;
+            }
+            .header-title {
+                font-size: 1.3rem;
+                padding: 10px 20px;
+            }
+            .comments-area {
+                height: 340px;
+            }
+            .bubble-3d {
+                font-size: 1rem;
+                padding: 14px 22px;
+                max-width: 90%;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 12px;
+                max-width: 100%;
+            }
+            .btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. THANH HEADER (NAVBAR) -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">
+            <i class="fa-solid fa-house-chimney"></i> CƯ XÁ 165
+        </a>
+        <ul class="nav-links">
+            <li><a href="#">Trang Chủ</a></li>
+            <li><a href="#">Tiện Ích</a></li>
+            <li><a href="#">Bảng Giá</a></li>
+            <li><a href="tel:0901234567" class="nav-phone-btn"><i class="fa-solid fa-phone"></i> 0901.234.567</a></li>
+        </ul>
+    </nav>
+
+    <!-- 2. BACKGROUND VIDEO -->
+    <div class="video-background">
+        <video autoplay loop muted playsinline id="bgVideo">
+            <source src="review_pt.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- 3. MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- Tiêu đề -->
+        <h1 class="header-title">Cư xá - 165 Trần Phú</h1>
+
+        <!-- Khu vực xuất hiện Comment ngẫu nhiên -->
+        <div class="comments-area" id="commentsArea"></div>
+
+        <!-- 2 Nút thao tác cao cấp -->
+        <div class="action-buttons">
+            <div class="btn-wrapper">
+                <a href="https://zalo.me/0901234567" target="_blank" class="btn btn-booking">
+                    <i class="fa-solid fa-calendar-check"></i> Đặt Phòng Ngay
+                </a>
+                <span class="btn-subtext">⚡ Giữ phòng đẹp - Nhận ưu đãi</span>
+            </div>
+
+            <div class="btn-wrapper">
+                <a href="https://www.google.com/maps/search/?api=1&query=165+Trần+Phú" target="_blank" class="btn btn-location">
+                    <i class="fa-solid fa-map-location-dot"></i> Xem Địa Chỉ
+                </a>
+                <span class="btn-subtext">📍 165 Trần Phú - Chỉ đường Maps</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. JAVASCRIPT ĐỔI COMMENT BẤT QUY TẮC -->
+    <script>
+        const messages = [
+            "Trọ giá siêu hợp lý 💵",
+            "Không gian rộng rãi, thoáng mát 🌿",
+            "Chỗ để xe rộng rãi, an ninh 🛵",
+            "Tiện nghi đầy đủ: Điều hòa, Tủ lạnh... 🛋️",
+            "Giờ giấc tự do, không chung chủ 🔑",
+            "Vị trí đắc địa 165 Trần Phú 📍",
+            "Wifi tốc độ cao, điện nước giá dân ⚡"
+        ];
+
+        const randomPositions = [
+            { top: '5%',  left: '5%',   rotate: '-4deg' },
+            { top: '12%', left: '46%',  rotate: '5deg'  },
+            { top: '40%', left: '10%',  rotate: '3deg'  },
+            { top: '45%', left: '50%',  rotate: '-5deg' },
+            { top: '70%', left: '6%',   rotate: '-2deg' },
+            { top: '72%', left: '44%',  rotate: '4deg'  }
+        ];
+
+        const area = document.getElementById('commentsArea');
+        const MAX_ON_SCREEN = 4;
+        let activeBubbles = [];
+        let msgIndex = 0;
+        let posIndex = 0;
+
+        function spawnComment() {
+            if (activeBubbles.length >= MAX_ON_SCREEN) {
+                const oldestBubble = activeBubbles.shift();
+                oldestBubble.classList.remove('show');
+                oldestBubble.classList.add('shake-drop');
+                
+                setTimeout(() => {
+                    oldestBubble.remove();
+                }, 600);
+            }
+
+            const text = messages[msgIndex];
+            const pos = randomPositions[posIndex];
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble-3d';
+            bubble.innerText = text;
+            
+            bubble.style.top = pos.top;
+            bubble.style.left = pos.left;
+            bubble.style.setProperty('--rot', pos.rotate);
+
+            area.appendChild(bubble);
+            activeBubbles.push(bubble);
+
+            setTimeout(() => {
+                bubble.classList.add('show');
+            }, 50);
+
+            msgIndex = (msgIndex + 1) % messages.length;
+            posIndex = (posIndex + 1) % randomPositions.length;
+
+            setTimeout(spawnComment, 1600);
+        }
+
+        window.onload = () => {
+            setTimeout(spawnComment, 500);
+        };
+    </script>
+</body>
+</html>

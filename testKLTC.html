@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cư xá - 165 Trần Phú & Hệ Thống Quản Lý Phòng 3D</title>
+    <!-- Font chữ Montserrat & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Import Three.js & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* ===== RESET STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            width: 100%;
+            background-color: #0d1117;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* ===== SECTION 1: LANDING PAGE HEADER & HERO ===== */
+        #hero-section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            /* Tăng tốc phần cứng cho Video Background */
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 2;
+            pointer-events: none; /* Tránh cản trở rendering */
+        }
+
+        /* ===== MODERN FLOATING GLASS HEADER ===== */
+        .navbar-wrapper {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1200px;
+            z-index: 1000;
+            will-change: transform;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 28px;
+            background: rgba(15, 23, 42, 0.88); /* Dùng màu phủ tĩnh nhẹ nhàng thay cho blur nặng */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-logo {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 900;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.03);
+        }
+
+        .logo-icon-bg {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-phone-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 9px 22px !important;
+            border-radius: 25px;
+            color: #ffffff !important;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-phone-btn i {
+            color: #60a5fa;
+            font-size: 0.9rem;
+        }
+
+        .nav-phone-btn:hover {
+            background: #2563eb !important;
+            border-color: #2563eb;
+            color: #ffffff !important;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .nav-phone-btn:hover i {
+            color: #ffffff;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* MOBILE DROPDOWN MENU - TỐI ƯU SIÊU MƯỢT */
+        .mobile-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 220px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+
+        .mobile-dropdown.open {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .mobile-dropdown a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .mobile-dropdown a i {
+            color: #38bdf8;
+            font-size: 1rem;
+            width: 20px;
+        }
+
+        .mobile-dropdown a:hover, .mobile-dropdown a:active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* MAIN HERO CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 110px 20px 30px 20px;
+        }
+
+        .header-title {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.75);
+            padding: 12px 35px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-top: 10px;
+        }
+
+        /* COMMENT BẤT QUY TẮC */
+        .comments-area {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 400px;
+            margin: auto 0;
+            pointer-events: none;
+        }
+
+        .bubble-3d {
+            position: absolute;
+            padding: 18px 32px;
+            border-radius: 30px;
+            background: #a29bfe; 
+            border: 3px solid #6c5ce7;
+            box-shadow: 0 10px 0px #4834d4, 0 15px 25px rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            font-size: 1.35rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            max-width: 85%;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+
+            opacity: 0;
+            transform: scale(0.5) rotate(0deg);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            will-change: transform, opacity;
+        }
+
+        .bubble-3d::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 35px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 20px 20px 0 0;
+            border-color: #a29bfe transparent transparent transparent;
+            filter: drop-shadow(0px 3px 0px #4834d4);
+        }
+
+        .bubble-3d.show {
+            opacity: 1;
+            transform: scale(1) rotate(var(--rot, 0deg));
+        }
+
+        .bubble-3d.shake-drop {
+            animation: shakeAndDrop 0.5s forwards ease-in;
+        }
+
+        @keyframes shakeAndDrop {
+            0% { transform: scale(1) rotate(0deg); }
+            30% { transform: scale(1.05) rotate(-5deg); }
+            60% { transform: scale(1) rotate(5deg); }
+            100% { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.8) rotate(10deg);
+            }
+        }
+
+        /* ===== ACTION BUTTONS TỐI ƯU HIỆU NĂNG ===== */
+        .action-buttons {
+            display: flex;
+            gap: 18px;
+            width: 100%;
+            max-width: 620px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .btn-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+            will-change: transform;
+        }
+
+        /* Nút Đặt phòng: Xanh dương đậm đà, phẳng mượt */
+        .btn-booking {
+            background: #2563eb;
+            color: #ffffff;
+            border: 1px solid #60a5fa;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-booking i {
+            color: #bfdbfe;
+            font-size: 1.1rem;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-booking:hover {
+            background: #1d4ed8;
+            border-color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.55);
+        }
+
+        /* Nút Xem địa chỉ: Tone tối đồng bộ Header, đằm chắc */
+        .btn-location {
+            background: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-location i {
+            color: #38bdf8;
+            font-size: 1.1rem;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-location:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn:hover i {
+            transform: scale(1.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-subtext {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+        }
+
+        /* ===== SECTION 2: 3D ROOM MANAGEMENT SYSTEM ===== */
+        #booking-3d-section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #e6f0fa;
+            overflow: hidden;
+        }
+
+        .zone-title-badge {
+            position: absolute;
+            top: 75px;
+            left: 32px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 24px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 2px solid #2563eb;
+            font-size: 24px;
+            font-weight: 900;
+            color: #1e293b;
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+
+        .header-tabs {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px;
+            border-radius: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .tab-btn {
+            padding: 8px 26px;
+            border-radius: 30px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #0f172a;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            display: block;
+            transition: opacity 0.35s ease-in-out;
+        }
+
+        #canvas-container.fading {
+            opacity: 0.2;
+        }
+
+        #detail-card {
+            position: absolute;
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%) translateX(140%);
+            width: 320px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 20;
+        }
+
+        #detail-card.active {
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            background: #e0f2fe;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #64748b;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .room-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .room-floor {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #ffe4e6;
+            color: #e11d48;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 12px;
+            margin-bottom: 20px;
+        }
+
+        .status-badge.available {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .info-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin-bottom: 16px;
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-action-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: background 0.2s, transform 0.1s;
+            text-decoration: none;
+        }
+
+        .card-action-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .card-action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ===== SECTION 3: BẢN ĐỒ GHÉ THĂM CHÚNG TÔI ===== */
+        #location-section {
+            width: 100vw;
+            min-height: 100vh;
+            background: #f8fafc;
+            color: #0f172a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 90px 20px 40px 20px;
+        }
+
+        .location-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .location-address {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .map-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            height: 520px;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .map-external-btn {
+            margin-top: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            background: #ffffff;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .map-external-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 850px) {
+            .navbar-wrapper {
+                top: 12px;
+                width: 95%;
+            }
+            .navbar {
+                padding: 10px 18px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: flex;
+            }
+            .nav-logo {
+                font-size: 1.05rem;
+            }
+            .header-title {
+                font-size: 1.3rem;
+                padding: 10px 20px;
+            }
+            .comments-area {
+                height: 340px;
+            }
+            .bubble-3d {
+                font-size: 1rem;
+                padding: 14px 22px;
+                max-width: 90%;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 12px;
+                max-width: 100%;
+            }
+            .btn {
+                padding: 14px 20px;
+                font-size: 0.88rem;
+            }
+            .zone-title-badge {
+                top: 70px;
+                left: 15px;
+                font-size: 18px;
+                padding: 8px 16px;
+            }
+            .header-tabs {
+                top: 70px;
+            }
+            #detail-card {
+                right: 5%;
+                width: 90%;
+            }
+            .location-title {
+                font-size: 1.8rem;
+            }
+            .map-wrapper {
+                height: 380px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: LANDING PAGE GIAO DIỆN CHÍNH -->
+    <section id="hero-section">
+        <!-- NAVIGATION HEADER CONTAINER -->
+        <div class="navbar-wrapper">
+            <nav class="navbar">
+                <a href="#" class="nav-logo">
+                    <div class="logo-icon-bg">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <span>CƯ XÁ 165</span>
+                </a>
+                
+                <!-- NAVIGATION LINKS DÀNH CHO DESKTOP -->
+                <ul class="nav-links">
+                    <li><a href="javascript:void(0)" onclick="scrollToBooking()">Sơ Đồ 3D</a></li>
+                    <li><a href="javascript:void(0)" onclick="scrollToLocation()">Địa Chỉ</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="tel:0901234567" class="nav-phone-btn">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>0901.234.567</span>
+                    </a>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu(event)">
+                        <i class="fa-solid fa-bars" id="menuIcon"></i>
+                    </button>
+                </div>
+
+                <!-- MENU XỔ XUỐNG DÀNH CHO MOBILE -->
+                <div class="mobile-dropdown" id="mobileDropdown">
+                    <a href="javascript:void(0)" onclick="scrollToBooking(); closeMobileMenu();">
+                        <i class="fa-solid fa-cube"></i> Sơ Đồ 3D
+                    </a>
+                    <a href="javascript:void(0)" onclick="scrollToLocation(); closeMobileMenu();">
+                        <i class="fa-solid fa-location-dot"></i> Xem Địa Chỉ
+                    </a>
+                    <a href="tel:0901234567" onclick="closeMobileMenu();">
+                        <i class="fa-solid fa-phone"></i> Gọi Hotline
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- VIDEO NỀN -->
+        <div class="video-background">
+            <video autoplay loop muted playsinline id="bgVideo">
+                <source src="review_pt.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <!-- MAIN CONTAINER CONTENT -->
+        <div class="main-container">
+            <h1 class="header-title">Cư xá - 165 Trần Phú</h1>
+
+            <!-- AREA COMMENT BẤT QUY TẮC -->
+            <div class="comments-area" id="commentsArea"></div>
+
+            <!-- ACTION BUTTONS ĐÃ THIẾT KẾ LẠI & TỐI ƯU HIỆU NĂNG -->
+            <div class="action-buttons">
+                <div class="btn-wrapper">
+                    <button onclick="scrollToBooking()" class="btn btn-booking">
+                        <i class="fa-solid fa-cube"></i> Đặt Phòng Ngay
+                    </button>
+                    <span class="btn-subtext">⚡ Trải nghiệm chọn phòng trên mô hình 3D</span>
+                </div>
+
+                <div class="btn-wrapper">
+                    <button onclick="scrollToLocation()" class="btn btn-location">
+                        <i class="fa-solid fa-location-dot"></i> Xem Địa Chỉ
+                    </button>
+                    <span class="btn-subtext">📍 165 Trần Phú - Chỉ đường Maps</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: MÔ HÌNH PHÒNG TRỌ 3D -->
+    <section id="booking-3d-section">
+        <div class="zone-title-badge" id="zone-display-title">Khu 1</div>
+
+        <div class="header-tabs">
+            <button class="tab-btn active" id="tab-zone1" onclick="switchZone(1)">Khu 1</button>
+            <button class="tab-btn" id="tab-zone2" onclick="switchZone(2)">Khu 2</button>
+        </div>
+
+        <div id="canvas-container"></div>
+
+        <div id="detail-card">
+            <div class="card-header">
+                <div class="icon-box">🏠</div>
+                <button class="close-btn" id="close-card">✕</button>
+            </div>
+            <div class="room-title" id="card-room-id">P205</div>
+            <div class="room-floor" id="card-room-floor">Tầng 2 - Khu 1</div>
+            
+            <div class="status-badge" id="card-room-status">Đã thuê</div>
+            
+            <div class="info-divider"></div>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="info-label">Diện tích</span>
+                    <span class="info-value" id="card-room-area">25 m²</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Giá thuê</span>
+                    <span class="info-value" id="card-room-price">2.500.000đ</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Loại phòng</span>
+                    <span class="info-value" id="card-room-type">Phòng đơn</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nội thất</span>
+                    <span class="info-value" id="card-room-furniture">Cơ bản</span>
+                </div>
+            </div>
+
+            <button class="card-action-btn" id="card-detail-link" onclick="viewRoomDetail()">Xem chi tiết phòng →</button>
+        </div>
+    </section>
+
+    <!-- SECTION 3: BẢN ĐỒ GOOGLE MAPS -->
+    <section id="location-section">
+        <h2 class="location-title">GHÉ THĂM CHÚNG TÔI</h2>
+        <p class="location-address">165 Trần Phú, Phường Phước Vĩnh, TP. Huế</p>
+
+        <div class="map-wrapper">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.33120194851!2d107.58129037583626!3d16.4586938289069!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a13437e6b063%3A0xb695e20609351df9!2zMTY1IFRyw6duIFBoxConstantLCBQaMaw4bubYyBWxKluaCwgVGjDoG5oIHBo4buRIEh14bq_LCBUaOG7q2EgVGhpw6puIEh14bq_!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+
+        <a href="https://www.google.com/maps/search/?api=1&query=165+Trần+Phú,+Phước+Vĩnh,+TP+Huế" target="_blank" class="map-external-btn">
+            XEM BẢN ĐỒ LỚN HƠN <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+    </section>
+
+    <!-- SCRIPT TỔNG HỢP -->
+    <script>
+        // --- 1. SỰ KIỆN XỔ DROPDOWN MENU MOBILE ---
+        function toggleMobileMenu(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('mobileDropdown');
+            const icon = document.getElementById('menuIcon');
+            
+            const isOpen = dropdown.classList.contains('open');
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                dropdown.classList.add('open');
+                icon.className = 'fa-solid fa-xmark';
+            }
+        }
+
+        function closeMobileMenu() {
+            const dropdown = document.getElementById('mobileDropdown');
+            const icon = document.getElementById('menuIcon');
+            if (dropdown) dropdown.classList.remove('open');
+            if (icon) icon.className = 'fa-solid fa-bars';
+        }
+
+        // Đóng menu khi bấm ra ngoài
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('mobileDropdown');
+            const btn = document.getElementById('mobileMenuBtn');
+            if (dropdown && dropdown.classList.contains('open')) {
+                if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                    closeMobileMenu();
+                }
+            }
+        });
+
+        // --- 2. HÀM CUỘN CHÍNH XÁC ---
+        function scrollToBooking() {
+            const bookingSection = document.getElementById('booking-3d-section');
+            const elementPosition = bookingSection.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+                top: elementPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollToLocation() {
+            const locationSection = document.getElementById('location-section');
+            const elementPosition = locationSection.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+                top: elementPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // --- 3. JAVASCRIPT COMMENT CHẠY NGẪU NHIÊN ---
+        const messages = [
+            "Trọ giá siêu hợp lý 💵",
+            "Không gian rộng rãi, thoáng mát 🌿",
+            "Chỗ để xe rộng rãi, an ninh 🛵",
+            "Tiện nghi đầy đủ: Điều hòa, Tủ lạnh... 🛋️",
+            "Giờ giấc tự do, không chung chủ 🔑",
+            "Vị trí đắc địa 165 Trần Phú 📍",
+            "Wifi tốc độ cao, điện nước giá dân ⚡"
+        ];
+
+        const randomPositions = [
+            { top: '5%',  left: '5%',   rotate: '-4deg' },
+            { top: '12%', left: '46%',  rotate: '5deg'  },
+            { top: '40%', left: '10%',  rotate: '3deg'  },
+            { top: '45%', left: '50%',  rotate: '-5deg' },
+            { top: '70%', left: '6%',   rotate: '-2deg' },
+            { top: '72%', left: '44%',  rotate: '4deg'  }
+        ];
+
+        const area = document.getElementById('commentsArea');
+        const MAX_ON_SCREEN = 4;
+        let activeBubbles = [];
+        let msgIndex = 0;
+        let posIndex = 0;
+
+        function spawnComment() {
+            if (!area) return;
+            if (activeBubbles.length >= MAX_ON_SCREEN) {
+                const oldestBubble = activeBubbles.shift();
+                oldestBubble.classList.remove('show');
+                oldestBubble.classList.add('shake-drop');
+                
+                setTimeout(() => {
+                    oldestBubble.remove();
+                }, 500);
+            }
+
+            const text = messages[msgIndex];
+            const pos = randomPositions[posIndex];
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble-3d';
+            bubble.innerText = text;
+            
+            bubble.style.top = pos.top;
+            bubble.style.left = pos.left;
+            bubble.style.setProperty('--rot', pos.rotate);
+
+            area.appendChild(bubble);
+            activeBubbles.push(bubble);
+
+            setTimeout(() => {
+                bubble.classList.add('show');
+            }, 50);
+
+            msgIndex = (msgIndex + 1) % messages.length;
+            posIndex = (posIndex + 1) % randomPositions.length;
+
+            setTimeout(spawnComment, 2000); // Tăng thời gian giãn cách animation để mượt máy hơn
+        }
+
+        // --- 4. THREE.JS SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xe6f0fa);
+
+        const floors = 5;
+        const roomsPerFloor = 10;
+        const roomWidth = 4.5;
+        const roomHeight = 3.4;
+        const buildingWidth = roomsPerFloor * roomWidth;
+        const buildingHeight = floors * roomHeight;
+        const buildingDepth = 9;
+
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 11.5, 46);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 - 0.01;
+        controls.minDistance = 15;
+        controls.maxDistance = 110;
+        controls.target.set(0, 11.5, 0);
+
+        // LIGHTING
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+        scene.add(ambientLight);
+
+        const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        sunLight.position.set(30, 50, 30);
+        sunLight.castShadow = true;
+        scene.add(sunLight);
+
+        // GROUND
+        const groundGeo = new THREE.PlaneGeometry(180, 180);
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0xebf2f7, roughness: 0.8 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.1;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // BUILDING STRUCTURE
+        const buildingGroup = new THREE.Group();
+
+        const bodyGeo = new THREE.BoxGeometry(buildingWidth, buildingHeight, buildingDepth);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xc8d0d8, roughness: 0.5 });
+        const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+        bodyMesh.position.set(0, buildingHeight / 2, 0);
+        bodyMesh.castShadow = true;
+        bodyMesh.receiveShadow = true;
+        buildingGroup.add(bodyMesh);
+
+        const sideWallGeo = new THREE.BoxGeometry(0.5, buildingHeight, buildingDepth + 0.1);
+        const sideWallMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+        const leftWall = new THREE.Mesh(sideWallGeo, sideWallMat);
+        leftWall.position.set(-buildingWidth / 2 - 0.25, buildingHeight / 2, 0);
+        const rightWall = new THREE.Mesh(sideWallGeo, sideWallMat);
+        rightWall.position.set(buildingWidth / 2 + 0.25, buildingHeight / 2, 0);
+        buildingGroup.add(leftWall);
+        buildingGroup.add(rightWall);
+
+        const roofHeight = 4.5;
+        const roofShape = new THREE.Shape();
+        roofShape.moveTo(-buildingWidth / 2 - 1.5, 0);
+        roofShape.lineTo(0, roofHeight);
+        roofShape.lineTo(buildingWidth / 2 + 1.5, 0);
+        roofShape.closePath();
+
+        const extrudeSettings = { depth: buildingDepth + 0.8, bevelEnabled: false };
+        const roofGeo = new THREE.ExtrudeGeometry(roofShape, extrudeSettings);
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4 });
+        const roofMesh = new THREE.Mesh(roofGeo, roofMat);
+        roofMesh.position.set(0, buildingHeight, -buildingDepth / 2 - 0.4);
+        roofMesh.castShadow = true;
+        buildingGroup.add(roofMesh);
+
+        for (let f = 1; f < floors; f++) {
+            const ledgeGeo = new THREE.BoxGeometry(buildingWidth + 0.2, 0.4, 0.6);
+            const ledgeMat = new THREE.MeshStandardMaterial({ color: 0x64748b });
+            const ledge = new THREE.Mesh(ledgeGeo, ledgeMat);
+            ledge.position.set(0, f * roomHeight, buildingDepth / 2 + 0.3);
+            buildingGroup.add(ledge);
+        }
+
+        const baseLedgeGeo = new THREE.BoxGeometry(buildingWidth + 0.4, 0.4, 0.7);
+        const baseLedgeMat = new THREE.MeshStandardMaterial({ color: 0x334155 });
+        const baseLedge = new THREE.Mesh(baseLedgeGeo, baseLedgeMat);
+        baseLedge.position.set(0, 0.2, buildingDepth / 2 + 0.35);
+        buildingGroup.add(baseLedge);
+
+        const dividerMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+        for (let f = 0; f < floors; f++) {
+            for (let r = 1; r < roomsPerFloor; r++) {
+                const dividerGeo = new THREE.BoxGeometry(0.12, roomHeight - 0.5, 0.2);
+                const dividerMesh = new THREE.Mesh(dividerGeo, dividerMat);
+                const dividerX = (r - roomsPerFloor / 2) * roomWidth;
+                const dividerY = f * roomHeight + roomHeight / 2;
+                dividerMesh.position.set(dividerX, dividerY, buildingDepth / 2 + 0.1);
+                buildingGroup.add(dividerMesh);
+            }
+        }
+
+        scene.add(buildingGroup);
+
+        // QUẢN LÝ KHU VỰC VÀ TẢI PHÒNG
+        let currentZone = 1;
+        let interactiveMeshes = [];
+        let currentSelectedRoomId = null;
+
+        function generateZoneData(zoneId) {
+            const dataMap = {};
+            for (let f = 1; f <= floors; f++) {
+                for (let r = 1; r <= roomsPerFloor; r++) {
+                    const roomNumStr = r < 10 ? `0${r}` : `${r}`;
+                    const roomId = `P${f}${roomNumStr}`;
+                    
+                    const isAvailable = zoneId === 1 ? ((f + r) % 3 === 0) : ((f + r * 2) % 4 === 0);
+
+                    dataMap[roomId] = {
+                        floor: `Tầng ${f} - Khu ${zoneId}`,
+                        status: isAvailable ? 'Đang trống' : 'Đã thuê',
+                        area: zoneId === 1 ? '25 m²' : '30 m²',
+                        price: `${(zoneId === 1 ? 2300000 : 2800000) + f * 100000}đ`,
+                        type: r % 2 === 0 ? 'Phòng đôi' : 'Phòng đơn',
+                        furniture: isAvailable ? 'Đầy đủ' : 'Cơ bản',
+                        available: isAvailable
+                    };
+                }
+            }
+            return dataMap;
+        }
+
+        function buildRoomButtons() {
+            interactiveMeshes.forEach(mesh => buildingGroup.remove(mesh));
+            interactiveMeshes = [];
+
+            const currentZoneData = generateZoneData(currentZone);
+
+            for (let f = 0; f < floors; f++) {
+                for (let r = 0; r < roomsPerFloor; r++) {
+                    const roomNumStr = (r + 1) < 10 ? `0${r + 1}` : `${r + 1}`;
+                    const roomId = `P${f + 1}${roomNumStr}`;
+                    const data = currentZoneData[roomId];
+                    
+                    const x = (r - (roomsPerFloor - 1) / 2) * roomWidth;
+                    const y = f * roomHeight + roomHeight / 2;
+                    const z = buildingDepth / 2 + 0.05;
+
+                    const roomFrameGeo = new THREE.PlaneGeometry(roomWidth - 0.5, roomHeight - 0.6);
+                    const roomFrameMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, side: THREE.DoubleSide });
+                    const roomMesh = new THREE.Mesh(roomFrameGeo, roomFrameMat);
+                    roomMesh.position.set(x, y, z);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 360;
+                    canvas.height = 180;
+                    const ctx = canvas.getContext('2d');
+
+                    ctx.fillStyle = '#1e293b';
+                    ctx.beginPath();
+                    ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 24);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'Bold 58px Montserrat, -apple-system, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(roomId, canvas.width / 2, canvas.height / 2 - 20);
+
+                    const badgeWidth = 170;
+                    const badgeHeight = 38;
+                    const badgeX = (canvas.width - badgeWidth) / 2;
+                    const badgeY = canvas.height / 2 + 22;
+
+                    if (data.available) {
+                        ctx.fillStyle = '#16a34a';
+                        ctx.beginPath();
+                        ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 12);
+                        ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'Bold 22px Montserrat, -apple-system, sans-serif';
+                        ctx.fillText('• Đang trống', canvas.width / 2, badgeY + badgeHeight / 2);
+                    } else {
+                        ctx.fillStyle = '#e11d48';
+                        ctx.beginPath();
+                        ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 12);
+                        ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'Bold 22px Montserrat, -apple-system, sans-serif';
+                        ctx.fillText('• Đã thuê', canvas.width / 2, badgeY + badgeHeight / 2);
+                    }
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const btnGeo = new THREE.PlaneGeometry(3.6, 1.8);
+                    const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                    const btnMesh = new THREE.Mesh(btnGeo, btnMat);
+                    btnMesh.position.set(0, 0, 0.05);
+                    
+                    roomMesh.add(btnMesh);
+                    roomMesh.userData = { id: roomId, data: data };
+
+                    interactiveMeshes.push(roomMesh);
+                    buildingGroup.add(roomMesh);
+                }
+            }
+        }
+
+        buildRoomButtons();
+
+        // CHUYỂN KHU
+        let isTransitioning = false;
+
+        window.switchZone = function(zoneId) {
+            if (currentZone === zoneId || isTransitioning) return;
+            isTransitioning = true;
+            currentZone = zoneId;
+
+            document.getElementById('tab-zone1').classList.toggle('active', zoneId === 1);
+            document.getElementById('tab-zone2').classList.toggle('active', zoneId === 2);
+            document.getElementById('zone-display-title').innerText = `Khu ${zoneId}`;
+
+            document.getElementById('detail-card').classList.remove('active');
+            if (selectedMesh) {
+                selectedMesh.material.color.setHex(0xd1d5db);
+                selectedMesh = null;
+            }
+
+            container.classList.add('fading');
+
+            const startRot = buildingGroup.rotation.y;
+            const targetRot = zoneId === 2 ? 0.35 : 0;
+            const startTime = performance.now();
+
+            function animateTransition(now) {
+                const elapsed = (now - startTime) / 1000;
+                const progress = Math.min(elapsed / 0.35, 1);
+                
+                buildingGroup.rotation.y = startRot + (targetRot - startRot) * progress;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateTransition);
+                } else {
+                    buildRoomButtons();
+                    container.classList.remove('fading');
+                    isTransitioning = false;
+                }
+            }
+
+            setTimeout(() => {
+                requestAnimationFrame(animateTransition);
+            }, 150);
+        };
+
+        // EVENT INTERACTION PHÒNG 3D
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredMesh = null;
+        let selectedMesh = null;
+
+        const detailCard = document.getElementById('detail-card');
+        const closeCardBtn = document.getElementById('close-card');
+
+        window.addEventListener('pointermove', (e) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveMeshes);
+
+            if (intersects.length > 0) {
+                document.body.style.cursor = 'pointer';
+                const hit = intersects[0].object;
+
+                if (hoveredMesh !== hit) {
+                    if (hoveredMesh && hoveredMesh !== selectedMesh) {
+                        hoveredMesh.material.color.setHex(0xd1d5db);
+                    }
+                    hoveredMesh = hit;
+                    if (hoveredMesh !== selectedMesh) {
+                        hoveredMesh.material.color.setHex(0x93c5fd);
+                    }
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                if (hoveredMesh && hoveredMesh !== selectedMesh) {
+                    hoveredMesh.material.color.setHex(0xd1d5db);
+                    hoveredMesh = null;
+                }
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            if (
+                e.clientX < rect.left ||
+                e.clientX > rect.right ||
+                e.clientY < rect.top ||
+                e.clientY > rect.bottom
+            ) return;
+
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveMeshes);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+
+                if (selectedMesh) {
+                    selectedMesh.material.color.setHex(0xd1d5db);
+                }
+
+                selectedMesh = hit;
+                selectedMesh.material.color.setHex(0x3b82f6);
+
+                showRoomDetail(selectedMesh.userData.id, selectedMesh.userData.data);
+            }
+        });
+
+        function showRoomDetail(id, info) {
+            currentSelectedRoomId = id;
+
+            document.getElementById('card-room-id').innerText = id;
+            document.getElementById('card-room-floor').innerText = info.floor;
+            
+            const statusBadge = document.getElementById('card-room-status');
+            statusBadge.innerText = info.status;
+            statusBadge.className = info.available ? 'status-badge available' : 'status-badge';
+
+            document.getElementById('card-room-area').innerText = info.area;
+            document.getElementById('card-room-price').innerText = info.price;
+            document.getElementById('card-room-type').innerText = info.type;
+            document.getElementById('card-room-furniture').innerText = info.furniture;
+
+            detailCard.classList.add('active');
+        }
+
+        function viewRoomDetail() {
+            if (currentSelectedRoomId) {
+                alert(`Bạn vừa nhấn xem chi tiết phòng ${currentSelectedRoomId} (Khu ${currentZone})`);
+            }
+        }
+
+        closeCardBtn.addEventListener('click', () => {
+            detailCard.classList.remove('active');
+            if (selectedMesh) {
+                selectedMesh.material.color.setHex(0xd1d5db);
+                selectedMesh = null;
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => {
+            setTimeout(spawnComment, 500);
+            animate();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Quản Lý KTX - KTX HUB</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
+
+  <!-- 1. TOP HEADER (Màu chủ đạo Trắng/Xám + Accent Điểm Nhấn) -->
+  <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+    <div class="flex items-center space-x-4">
+      <!-- Logo Accent Blue -->
+      <div class="bg-blue-600 text-white px-3 py-1.5 rounded-xl font-black tracking-wider text-xl flex items-center gap-1 shadow-md shadow-blue-500/20">
+        KTX<span class="text-blue-200">HUB</span>
+      </div>
+      <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200 font-medium">
+        Khu B - Ban Quản Lý
+      </span>
+    </div>
+
+    <!-- Quick Metrics (Phối màu bắt mắt theo trạng thái) -->
+    <div class="hidden lg:flex items-center space-x-6 text-sm">
+      <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-lg">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-slate-600 text-xs font-medium">Lấp đầy:</span>
+        <span class="font-bold text-emerald-700">88% (352/400)</span>
+      </div>
+      <div class="flex items-center space-x-2 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-lg">
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+        <span class="text-slate-600 text-xs font-medium">Nợ điện nước:</span>
+        <span class="font-bold text-rose-600">12 Phòng</span>
+      </div>
+      <div class="flex items-center space-x-2 bg-amber-50 border border-amber-200/60 px-3 py-1 rounded-lg">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+        <span class="text-slate-600 text-xs font-medium">Chờ duyệt cọc:</span>
+        <span class="font-bold text-amber-600">5 Yêu cầu</span>
+      </div>
+    </div>
+
+    <!-- User Profile -->
+    <div class="flex items-center space-x-3 border-l border-slate-200 pl-6">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+        NV
+      </div>
+      <div>
+        <p class="text-sm font-bold leading-none text-slate-900">Nguyễn Văn Quản Lý</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Ca trực: Khóa sáng</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. NAVIGATION BAR -->
+  <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-2 flex items-center justify-between sticky top-[57px] z-30">
+    <div class="flex space-x-1" id="nav-tabs">
+      <button onclick="switchTab('rooms')" id="tab-rooms" class="nav-btn active flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-500/20">
+        <i data-lucide="home" class="w-4 h-4"></i>
+        <span>Quản Lý Phòng</span>
+      </button>
+      <button onclick="switchTab('students')" id="tab-students" class="nav-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+        <i data-lucide="users" class="w-4 h-4"></i>
+        <span>Sinh Viên</span>
+        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">1,204</span>
+      </button>
+      <button onclick="switchTab('utilities')" id="tab-utilities" class="nav-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+        <i data-lucide="zap" class="w-4 h-4"></i>
+        <span>Điện & Nước</span>
+        <span class="text-xs bg-rose-100 text-rose-600 font-bold px-2 py-0.5 rounded-full border border-rose-200">12 Nợ</span>
+      </button>
+      <button onclick="switchTab('invoices')" id="tab-invoices" class="nav-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>Hóa Đơn</span>
+      </button>
+      <button onclick="switchTab('deposits')" id="tab-deposits" class="nav-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        <span>Đặt Cọc & Giữ Chỗ</span>
+        <span class="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full border border-amber-200">5 Mới</span>
+      </button>
+    </div>
+
+    <!-- Action Button Nổi bật -->
+    <button onclick="openUtilityModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 transition shadow-md shadow-emerald-600/20">
+      <i data-lucide="plus-circle" class="w-4 h-4"></i>
+      <span>Ghi Điện/Nước Nhanh</span>
+    </button>
+  </nav>
+
+  <!-- 3. MAIN WORKSPACE -->
+  <main class="flex-1 p-6 grid grid-cols-12 gap-6">
+
+    <!-- LEFT WORKSPACE (9 cols) -->
+    <section class="col-span-12 lg:col-span-9 flex flex-col space-y-4">
+
+      <!-- VIEW 1: QUẢN LÝ PHÒNG -->
+      <div id="view-rooms" class="space-y-4">
+        
+        <!-- Filter Toolbar -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+          <!-- Building Selector Buttons -->
+          <div class="flex items-center space-x-2">
+            <span class="text-xs uppercase text-slate-400 font-bold tracking-wider mr-1">Tòa:</span>
+            <button onclick="filterBuilding('A1')" class="bld-btn px-3.5 py-1.5 rounded-xl text-sm font-bold bg-blue-600 text-white shadow-sm transition">Tòa A1</button>
+            <button onclick="filterBuilding('A2')" class="bld-btn px-3.5 py-1.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition">Tòa A2</button>
+            <button onclick="filterBuilding('B1')" class="bld-btn px-3.5 py-1.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition">Tòa B1</button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="flex items-center space-x-3 flex-1 max-w-xs">
+            <div class="relative w-full">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400"></i>
+              <input type="text" id="search-input" onkeyup="renderRooms()" placeholder="Tìm số phòng, tên sinh viên..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-1.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+            </div>
+          </div>
+
+          <!-- Status Color Badges Filter -->
+          <div class="flex items-center space-x-2 text-xs font-bold">
+            <button onclick="filterStatus('ALL')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Tất cả</button>
+            <button onclick="filterStatus('AVAILABLE')" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 transition">🟢 Còn chỗ</button>
+            <button onclick="filterStatus('FULL')" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition">🔵 Đã đầy</button>
+            <button onclick="filterStatus('OVERDUE')" class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition">🔴 Nợ điện nước</button>
+          </div>
+        </div>
+
+        <!-- Room Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="room-grid">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- VIEW 2: QUẢN LÝ SINH VIÊN -->
+      <div id="view-students" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+          <h2 class="font-bold text-slate-900 text-base">Danh Sách Sinh Viên Đang Lưu Trú</h2>
+          <span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 font-bold px-3 py-1 rounded-full">Tổng: 1,204 Sinh Viên</span>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase text-[11px] font-bold">
+                <th class="p-3.5">MSSV</th>
+                <th class="p-3.5">Họ và Tên</th>
+                <th class="p-3.5">Phòng</th>
+                <th class="p-3.5">Trạng Thái Tiền Cọc</th>
+                <th class="p-3.5 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50">
+                <td class="p-3.5 font-mono font-bold text-slate-900">23T1080004</td>
+                <td class="p-3.5 font-bold text-slate-900">Nguyễn Quốc Đạt</td>
+                <td class="p-3.5"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-md font-bold text-xs">101 - A1</span></td>
+                <td class="p-3.5"><span class="text-xs bg-emerald-50 text-emerald-600 font-bold px-2.5 py-1 rounded-full border border-emerald-200">✓ Đã cọc đủ 1.000.000đ</span></td>
+                <td class="p-3.5 text-right"><button class="text-xs font-bold text-blue-600 hover:underline">Chi tiết</button></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3.5 font-mono font-bold text-slate-900">23T1080012</td>
+                <td class="p-3.5 font-bold text-slate-900">Lê Văn Bảo</td>
+                <td class="p-3.5"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-md font-bold text-xs">102 - A1</span></td>
+                <td class="p-3.5"><span class="text-xs bg-amber-50 text-amber-600 font-bold px-2.5 py-1 rounded-full border border-amber-200">⚠ Còn thiếu 200.000đ</span></td>
+                <td class="p-3.5 text-right"><button class="text-xs font-bold text-blue-600 hover:underline">Chi tiết</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 3: QUẢN LÝ ĐIỆN NƯỚC -->
+      <div id="view-utilities" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+          <div>
+            <h2 class="font-bold text-slate-900">Bảng Chốt Chỉ Số Điện & Nước</h2>
+            <p class="text-xs text-slate-400">Kỳ chốt cước: Tháng 10/2026</p>
+          </div>
+          <button onclick="openUtilityModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-sm font-bold transition shadow-sm">
+            + Nhập Số Mới
+          </button>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase text-[11px] font-bold">
+                <th class="p-3.5">Số Phòng</th>
+                <th class="p-3.5">Chỉ Số Điện</th>
+                <th class="p-3.5">Chỉ Số Nước</th>
+                <th class="p-3.5">Tổng Tiền</th>
+                <th class="p-3.5">Trạng Thái Thanh Toán</th>
+                <th class="p-3.5 text-right">Tác Vụ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50">
+                <td class="p-3.5 font-bold text-slate-900">Phòng 101</td>
+                <td class="p-3.5 font-mono">1,240 → <span class="font-bold text-slate-900">1,350</span> kWh</td>
+                <td class="p-3.5 font-mono">310 → <span class="font-bold text-slate-900">328</span> m³</td>
+                <td class="p-3.5 font-bold text-blue-600">650.000đ</td>
+                <td class="p-3.5"><span class="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold px-2.5 py-1 rounded-full">Đã Thanh Toán</span></td>
+                <td class="p-3.5 text-right"><button onclick="viewInvoice('101')" class="text-xs font-bold border border-slate-300 hover:bg-slate-100 px-2.5 py-1 rounded-lg">In Hóa Đơn</button></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3.5 font-bold text-slate-900">Phòng 103</td>
+                <td class="p-3.5 font-mono">2,100 → <span class="font-bold text-slate-900">2,320</span> kWh</td>
+                <td class="p-3.5 font-mono">540 → <span class="font-bold text-slate-900">580</span> m³</td>
+                <td class="p-3.5 font-bold text-rose-600">1.250.000đ</td>
+                <td class="p-3.5"><span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-full">Quá Hạn 12 Ngày</span></td>
+                <td class="p-3.5 text-right"><button onclick="alert('Đã phát thông báo nhắc nợ!')" class="text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white px-2.5 py-1 rounded-lg shadow-sm">Báo Nợ</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 4: HÓA ĐƠN -->
+      <div id="view-invoices" class="hidden space-y-4">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+            <p class="text-xs font-bold text-slate-400 uppercase">Đã Thu Trong Tháng</p>
+            <p class="text-2xl font-black text-emerald-600 mt-1">142.500.000đ</p>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
+            <p class="text-xs font-bold text-slate-400 uppercase">Còn Nợ Chưa Thu</p>
+            <p class="text-2xl font-black text-rose-600 mt-1">18.200.000đ</p>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-blue-500">
+            <p class="text-xs font-bold text-slate-400 uppercase">Tỷ Lệ Thu Cước</p>
+            <p class="text-2xl font-black text-blue-600 mt-1">88.5%</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: ĐẶT CỌC -->
+      <div id="view-deposits" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <h2 class="font-bold text-slate-900">Duyệt Đăng Ký Giữ Chỗ & Đặt Cọc</h2>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase text-[11px] font-bold">
+                <th class="p-3.5">Sinh Viên Đăng Ký</th>
+                <th class="p-3.5">Phòng Giữ Chỗ</th>
+                <th class="p-3.5">Số Tiền</th>
+                <th class="p-3.5">Minh Chứng CK</th>
+                <th class="p-3.5 text-right">Phê Duyệt</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50">
+                <td class="p-3.5">
+                  <p class="font-bold text-slate-900">Trần Văn An</p>
+                  <p class="text-xs text-slate-400">0981.234.567</p>
+                </td>
+                <td class="p-3.5 font-bold text-blue-600">Phòng 103 - A1</td>
+                <td class="p-3.5 font-mono font-bold text-emerald-600">500.000đ</td>
+                <td class="p-3.5"><span class="text-xs font-bold text-blue-600 hover:underline cursor-pointer">Bien_nhan_chuyen_khoan.jpg</span></td>
+                <td class="p-3.5 text-right space-x-1">
+                  <button onclick="approveDeposit('Trần Văn An')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">Xác Nhận</button>
+                  <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold">Từ Chối</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COMMAND DRAWER (3 cols) -->
+    <section class="col-span-12 lg:col-span-3 space-y-4">
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 class="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i>
+            Tác Vụ Cần Xử Lý Ngay
+          </h2>
+        </div>
+
+        <!-- Warning Card 1 (Red Accent) -->
+        <div class="bg-rose-50/60 border border-rose-200/80 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-start text-xs">
+            <span class="font-bold text-slate-900">Phòng 103 - Tòa A1</span>
+            <span class="text-rose-600 font-black">1.250.000đ</span>
+          </div>
+          <p class="text-[11px] text-slate-500">Trễ hạn thanh toán tiền điện 12 ngày</p>
+          <button onclick="alert('Đã gửi thông báo nhắc nợ!')" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs transition shadow-sm">
+            Gửi Nhắc Nợ
+          </button>
+        </div>
+
+        <!-- Warning Card 2 (Amber Accent) -->
+        <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-start text-xs">
+            <div>
+              <p class="font-bold text-slate-900">Trần Văn An</p>
+              <p class="text-[11px] text-slate-500">Đăng ký: Phòng 103</p>
+            </div>
+            <span class="text-amber-700 font-black">500.000đ</span>
+          </div>
+          <p class="text-[11px] text-slate-500">Chờ duyệt minh chứng chuyển cọc</p>
+          <div class="flex space-x-2 pt-1">
+            <button onclick="approveDeposit('Trần Văn An')" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white py-1.5 rounded-lg text-xs font-bold transition shadow-sm">
+              Duyệt Cọc
+            </button>
+            <button class="px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold">
+              Bỏ qua
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: GHI ĐIỆN NƯỚC -->
+  <div id="modal-utility" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Chốt Chỉ Số Điện Nước</h3>
+        <button onclick="closeUtilityModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Chọn Phòng</label>
+          <select class="w-full border border-slate-200 rounded-xl p-2.5 text-slate-800 bg-slate-50 font-medium focus:outline-none focus:border-blue-500">
+            <option>Phòng 101 - Tòa A1</option>
+            <option>Phòng 102 - Tòa A1</option>
+            <option>Phòng 103 - Tòa A1</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Số Điện Mới (kWh)</label>
+            <input type="number" placeholder="1350" class="w-full border border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Số Nước Mới (m³)</label>
+            <input type="number" placeholder="328" class="w-full border border-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+      </div>
+      <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+        <button onclick="closeUtilityModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold">Hủy</button>
+        <button onclick="saveUtility()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-500 shadow-md shadow-blue-500/20">Lưu Chỉ Số</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT Mechanics -->
+  <script>
+    lucide.createIcons();
+
+    const roomsData = [
+      { id: '101', building: 'A1', type: '4 Giường', filled: 4, capacity: 4, status: 'FULL', utilityStatus: 'PAID', depositStatus: 'OK' },
+      { id: '102', building: 'A1', type: '4 Giường', filled: 3, capacity: 4, status: 'AVAILABLE', utilityStatus: 'PAID', depositStatus: 'OK' },
+      { id: '103', building: 'A1', type: '6 Giường', filled: 6, capacity: 6, status: 'FULL', utilityStatus: 'OVERDUE', depositStatus: 'PENDING' },
+      { id: '104', building: 'A1', type: '6 Giường', filled: 2, capacity: 6, status: 'AVAILABLE', utilityStatus: 'PAID', depositStatus: 'OK' },
+      { id: '105', building: 'A2', type: '4 Giường', filled: 0, capacity: 4, status: 'AVAILABLE', utilityStatus: 'PAID', depositStatus: 'NONE' },
+      { id: '106', building: 'A2', type: '4 Giường', filled: 4, capacity: 4, status: 'MAINTENANCE', utilityStatus: 'NONE', depositStatus: 'NONE' },
+    ];
+
+    let currentBuilding = 'A1';
+    let currentStatusFilter = 'ALL';
+
+    function renderRooms() {
+      const container = document.getElementById('room-grid');
+      const searchVal = document.getElementById('search-input').value.toLowerCase();
+      container.innerHTML = '';
+
+      const filtered = roomsData.filter(r => {
+        const matchesBuilding = r.building === currentBuilding;
+        const matchesStatus = currentStatusFilter === 'ALL' || 
+          (currentStatusFilter === 'AVAILABLE' && r.filled < r.capacity) ||
+          (currentStatusFilter === 'FULL' && r.filled === r.capacity) ||
+          (currentStatusFilter === 'OVERDUE' && r.utilityStatus === 'OVERDUE');
+        const matchesSearch = r.id.includes(searchVal);
+        return matchesBuilding && matchesStatus && matchesSearch;
+      });
+
+      if(filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-400 text-sm">Không tìm thấy phòng phù hợp.</div>`;
+        return;
+      }
+
+      filtered.forEach(room => {
+        const isFull = room.filled === room.capacity;
+
+        // Visual Progress bar slots với màu sắc phân biệt
+        let slotsHtml = '';
+        for(let i=0; i<room.capacity; i++) {
+          const isOccupied = i < room.filled;
+          const slotColor = isOccupied ? (isFull ? 'bg-blue-600' : 'bg-emerald-500') : 'bg-slate-200';
+          slotsHtml += `<div class="h-full flex-1 border-r border-white last:border-0 ${slotColor}"></div>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between transition-all shadow-sm hover:shadow-md";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-lg font-black text-slate-900">Phòng ${room.id}</h3>
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                    ${room.type}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Tầng 1 • Tòa ${room.building}</p>
+              </div>
+
+              <!-- Badges Cảnh báo nổi bật màu sắc -->
+              <div class="flex flex-col items-end space-y-1">
+                ${room.utilityStatus === 'OVERDUE' ? `
+                  <span class="text-[10px] font-bold px-2 py-0.5 bg-rose-100 text-rose-600 border border-rose-200 rounded-full flex items-center gap-1">
+                    <i data-lucide="alert-circle" class="w-3 h-3"></i> Nợ Điện
+                  </span>` : ''}
+                ${room.depositStatus === 'PENDING' ? `
+                  <span class="text-[10px] font-bold px-2 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded-full flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3"></i> Chờ Cọc
+                  </span>` : ''}
+              </div>
+            </div>
+
+            <div class="my-4">
+              <div class="flex justify-between text-xs mb-1.5 font-semibold">
+                <span class="text-slate-400">Số chỗ hiện tại:</span>
+                <span class="${isFull ? 'text-blue-600' : 'text-emerald-600'} font-bold">${room.filled}/${room.capacity} SV</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex border border-slate-100">
+                ${slotsHtml}
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span class="font-bold ${isFull ? 'text-blue-600' : 'text-emerald-600'}">
+              ● ${isFull ? 'Đã đủ người' : `Còn ${room.capacity - room.filled} chỗ trống`}
+            </span>
+            <button onclick="viewInvoice('${room.id}')" class="text-slate-600 hover:text-blue-600 font-bold flex items-center space-x-1 transition">
+              <span>Xem phòng</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      
+      lucide.createIcons();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/20');
+        btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+      });
+
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+      activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/20');
+
+      ['rooms', 'students', 'utilities', 'invoices', 'deposits'].forEach(id => {
+        document.getElementById(`view-${id}`).classList.add('hidden');
+      });
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+    }
+
+    function filterBuilding(bld) {
+      currentBuilding = bld;
+      document.querySelectorAll('.bld-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+      });
+      event.target.classList.remove('text-slate-600', 'hover:bg-slate-100');
+      event.target.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+      renderRooms();
+    }
+
+    function filterStatus(status) {
+      currentStatusFilter = status;
+      renderRooms();
+    }
+
+    function openUtilityModal() { document.getElementById('modal-utility').classList.remove('hidden'); }
+    function closeUtilityModal() { document.getElementById('modal-utility').classList.add('hidden'); }
+    function saveUtility() { alert('Đã chốt số điện nước thành công!'); closeUtilityModal(); }
+    function approveDeposit(name) { alert(`Đã phê duyệt tiền cọc cho: ${name}`); }
+
+    renderRooms();
+  </script>
+</body>
+</html>

@@ -388,9 +388,53 @@
             z-index: 10;
         }
 
+        /* --- DẢI LỤA CHÉO GÓC DƯỚI BÊN TRÁI (HIỆU ỨNG CUỘN CHỮ) --- */
+        .ribbon-container {
+            position: absolute;
+            bottom: 40px;
+            left: -60px;
+            width: 320px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: rotate(45deg);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-top: 2px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        .ribbon-track {
+            display: flex;
+            white-space: nowrap;
+            animation: ribbonScroll 8s linear infinite;
+        }
+
+        .ribbon-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-right: 30px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes ribbonScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
         .header-tabs {
             position: absolute;
-            top: 85px;
+            top: 67px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.95);
@@ -697,7 +741,7 @@
         .footer-logo-hex {
             width: 22px;
             height: 22px;
-            background: #3b82f6; /* Đã chuyển sang xanh dương ton-sur-ton với giao diện */
+            background: #3b82f6;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
         }
@@ -847,9 +891,9 @@
             </a>
 
             <ul class="nav-menu-links">
-                <li><a href="javascript:void(0)" onclick="scrollToBooking()">Sơ Đồ 3D</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToBooking()">Thuê phòng</a></li>
                 <li><a href="javascript:void(0)" onclick="scrollToLocation()">Địa Chỉ</a></li>
-                <li><a href="tel:0901234567" class="btn-access-nav">GỌI HOTLINE</a></li>
+                <li><a href="#" class="btn-access-nav">Đăng nhập</a></li>
             </ul>
         </nav>
 
@@ -866,11 +910,12 @@
                 </p>
                 <div class="action-buttons">
                     <button onclick="scrollToBooking()" class="btn-tectonic-blue">
-                        ĐẶT PHÒNG
+                        THUÊ PHÒNG
                     </button>
                     <button onclick="scrollToLocation()" class="btn-tectonic-grey">
                         XEM BẢN ĐỒ
                     </button>
+        
                 </div>
             </div>
         </div>
@@ -909,6 +954,16 @@
     <!-- SECTION 2: MÔ HÌNH PHÒNG TRỌ 3D -->
     <section id="booking-3d-section">
         <div class="zone-title-badge" id="zone-display-title">Khu 1</div>
+
+        <!-- DẢI LỤA CHÉO CUỘN LIÊN TỤC GÓC DƯỚI BÊN TRÁI -->
+        <div class="ribbon-container">
+            <div class="ribbon-track">
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+            </div>
+        </div>
 
         <div class="header-tabs">
             <button class="tab-btn active" id="tab-zone1" onclick="switchZone(1)">Khu 1</button>
@@ -987,9 +1042,8 @@
             <div class="footer-links-col">
                 <h4 class="footer-col-title">Khu vực</h4>
                 <ul class="footer-links-list">
-                    <li><a href="javascript:void(0)" onclick="switchZone(1)">Khu 1 (Tầng 1 - 5)</a></li>
-                    <li><a href="javascript:void(0)" onclick="switchZone(2)">Khu 2 (Mở rộng)</a></li>
-                    <li><a href="javascript:void(0)" onclick="scrollToBooking()">Sơ Đồ 3D Trực Quan</a></li>
+                    <li><a href="javascript:void(0)" onclick="switchZone(1)">126 Trần Phú - TP Huế</a></li>
+                    <li><a href="javascript:void(0)" onclick="scrollToBooking()">Thuê phòng</a></li>
                 </ul>
             </div>
 
@@ -997,9 +1051,8 @@
                 <h4 class="footer-col-title">Kết nối</h4>
                 <ul class="footer-links-list">
                     <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
-                    <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
-                    <li><a href="tel:0901234567">Hotline Hỗ Trợ</a></li>
-                    <li><a href="mailto:contact@cuxa126.vn">Email Liên Hệ</a></li>
+                    <li><a href="tel:0901234567">Hotline: 0981 635 875</a></li>
+                    <li><a href="mailto:contact@cuxa126.vn">Email: vntrung981@gmail.com</a></li>
                 </ul>
             </div>
         </div>
@@ -1007,8 +1060,8 @@
         <div class="footer-divider-line"></div>
 
         <div class="footer-bottom-flex">
-            <span>© 2026 CƯ XÁ 126 TRẦN PHÚ. ALL RIGHTS RESERVED.</span>
-            <span>EST. 2026 • HỆ THỐNG QUẢN LÝ 3D</span>
+            <span>© 2027 CƯ XÁ 126 TRẦN PHÚ. ALL RIGHTS RESERVED.</span>
+            <span>EST. 2027 • Một sản phẩm của Quốc Đạt</span>
         </div>
     </footer>
 

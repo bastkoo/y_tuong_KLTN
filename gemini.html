@@ -17,11 +17,11 @@
       color: #1e293b;
     }
 
-    /* NHÃN KHU TO Ở GÓC TRÊN BÊN TRÁI */
+    /* NHÃN KHU TO Ở GÓC TRÊN BÊN PHẢI */
     .zone-title-badge {
       position: absolute;
       top: 24px;
-      left: 32px;
+      right: 32px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       padding: 12px 28px;
@@ -40,7 +40,7 @@
     .header-tabs {
       position: absolute;
       top: 20px;
-      left: 50%;
+      left: 55%;
       transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(12px);
@@ -70,6 +70,90 @@
       background: #2563eb;
       color: #ffffff;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* NÚT BẤM ĐỂ BẬT/TẮT BỘ LỌC GIÁ */
+    .filter-toggle-btn {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .filter-toggle-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* BỘ LỌC GIÁ PHÒNG (MẶC ĐỊNH ẨN, XỔ RA KHI ẤN NÚT) */
+    .price-filter-panel {
+      position: absolute;
+      top: 80px;
+      left: 32px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 16px 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 220px;
+      
+      /* Hiệu ứng ẩn/hiện mượt mà */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+    .price-filter-panel.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .filter-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .filter-btn {
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .filter-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .filter-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
     }
 
     /* 3D Canvas với hiệu ứng Fade Chuyển Khu */
@@ -223,8 +307,22 @@
 </head>
 <body>
 
-  <!-- BẢNG NHÃN KHU TO GÓC TRÊN BÊN TRÁI -->
+  <!-- BẢNG NHÃN KHU TO Ở GÓC TRÊN BÊN PHẢI -->
   <div class="zone-title-badge" id="zone-display-title">Khu 1</div>
+
+  <!-- NÚT BẤM ĐỂ XỔ RA BỘ LỌC GIÁ -->
+  <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
+    <span>🔍 Lọc giá phòng</span>
+  </button>
+
+  <!-- BỘ LỌC GIÁ PHÒNG Ở BÊN TRÁI -->
+  <div class="price-filter-panel" id="priceFilterPanel">
+    <div class="filter-title">Chọn mức giá</div>
+    <button class="filter-btn active" id="filter-all" onclick="filterByPrice('all')">Tất cả mức giá</button>
+    <button class="filter-btn" id="filter-p1" onclick="filterByPrice('under1m')">Dưới 1.000.000đ</button>
+    <button class="filter-btn" id="filter-p2" onclick="filterByPrice('1m-2m')">1.000.000đ -> 2.000.000đ</button>
+    <button class="filter-btn" id="filter-p3" onclick="filterByPrice('2m-3m')">2.000.000đ -> 3.000.000đ</button>
+  </div>
 
   <!-- Thanh Chuyển Đổi Khu 1 / Khu 2 -->
   <div class="header-tabs">
@@ -270,6 +368,12 @@
   </div>
 
   <script>
+    // --- HÀM BẬT/TẮT BẢNG LỌC GIÁ ---
+    function toggleFilterPanel() {
+      const panel = document.getElementById('priceFilterPanel');
+      panel.classList.toggle('show');
+    }
+
     // --- 1. SETUP THREE.JS SCENE ---
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
@@ -390,6 +494,7 @@
 
     // --- 5. QUẢN LÝ DỮ LIỆU & NÚT PHÒNG THEO KHU ---
     let currentZone = 1;
+    let currentPriceFilter = 'all';
     let interactiveMeshes = [];
 
     function generateZoneData(zoneId) {
@@ -400,12 +505,16 @@
           const roomId = `P${f}${roomNumStr}`;
           
           const isAvailable = zoneId === 1 ? ((f + r) % 3 === 0) : ((f + r * 2) % 4 === 0);
+          
+          // Tính giá phòng giả lập (từ 800.000đ đến 2.900.000đ)
+          const rawPrice = 800000 + ((f * 150000 + r * 75000) % 2200000);
 
           dataMap[roomId] = {
             floor: `Tầng ${f} - Khu ${zoneId}`,
             status: isAvailable ? 'Đang trống' : 'Đã thuê',
             area: zoneId === 1 ? '25 m²' : '30 m²',
-            price: `${(zoneId === 1 ? 2300000 : 2800000) + f * 100000}đ`,
+            priceNum: rawPrice,
+            price: rawPrice.toLocaleString('vi-VN') + 'đ',
             type: r % 2 === 0 ? 'Phòng đôi' : 'Phòng đơn',
             furniture: isAvailable ? 'Đầy đủ' : 'Cơ bản',
             available: isAvailable
@@ -427,12 +536,27 @@
           const roomId = `P${f + 1}${roomNumStr}`;
           const data = currentZoneData[roomId];
           
+          // Kiểm tra điều kiện bộ lọc giá
+          let matchesPriceFilter = true;
+          if (currentPriceFilter === 'under1m') {
+            matchesPriceFilter = data.priceNum < 1000000;
+          } else if (currentPriceFilter === '1m-2m') {
+            matchesPriceFilter = data.priceNum >= 1000000 && data.priceNum <= 2000000;
+          } else if (currentPriceFilter === '2m-3m') {
+            matchesPriceFilter = data.priceNum > 2000000 && data.priceNum <= 3000000;
+          }
+
           const x = (r - (roomsPerFloor - 1) / 2) * roomWidth;
           const y = f * roomHeight + roomHeight / 2;
           const z = buildingDepth / 2 + 0.05;
 
           const roomFrameGeo = new THREE.PlaneGeometry(roomWidth - 0.5, roomHeight - 0.6);
-          const roomFrameMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, side: THREE.DoubleSide });
+          const roomFrameMat = new THREE.MeshStandardMaterial({ 
+            color: matchesPriceFilter ? 0xd1d5db : 0x9ca3af, 
+            transparent: true,
+            opacity: matchesPriceFilter ? 1.0 : 0.25,
+            side: THREE.DoubleSide 
+          });
           const roomMesh = new THREE.Mesh(roomFrameGeo, roomFrameMat);
           roomMesh.position.set(x, y, z);
 
@@ -441,7 +565,7 @@
           canvas.height = 180;
           const ctx = canvas.getContext('2d');
 
-          ctx.fillStyle = '#1e293b';
+          ctx.fillStyle = matchesPriceFilter ? '#1e293b' : '#64748b';
           ctx.beginPath();
           ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 24);
           ctx.fill();
@@ -479,12 +603,12 @@
 
           const texture = new THREE.CanvasTexture(canvas);
           const btnGeo = new THREE.PlaneGeometry(3.6, 1.8);
-          const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+          const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: matchesPriceFilter ? 1.0 : 0.25 });
           const btnMesh = new THREE.Mesh(btnGeo, btnMat);
           btnMesh.position.set(0, 0, 0.05);
           
           roomMesh.add(btnMesh);
-          roomMesh.userData = { id: roomId, data: data };
+          roomMesh.userData = { id: roomId, data: data, filteredOut: !matchesPriceFilter };
 
           interactiveMeshes.push(roomMesh);
           buildingGroup.add(roomMesh);
@@ -494,6 +618,24 @@
 
     buildRoomButtons();
 
+    // HÀM LỌC THEO GIÁ
+    window.filterByPrice = function(filterType) {
+      currentPriceFilter = filterType;
+      
+      document.getElementById('filter-all').classList.toggle('active', filterType === 'all');
+      document.getElementById('filter-p1').classList.toggle('active', filterType === 'under1m');
+      document.getElementById('filter-p2').classList.toggle('active', filterType === '1m-2m');
+      document.getElementById('filter-p3').classList.toggle('active', filterType === '2m-3m');
+
+      document.getElementById('detail-card').classList.remove('active');
+      if (selectedMesh) {
+        selectedMesh.material.color.setHex(0xd1d5db);
+        selectedMesh = null;
+      }
+
+      buildRoomButtons();
+    };
+
     // HIỆU ỨNG CHUYỂN KHU MƯỢT MÀ (ROTATE & FADE)
     let isTransitioning = false;
 
@@ -502,24 +644,20 @@
       isTransitioning = true;
       currentZone = zoneId;
 
-      // 1. Cập nhật giao diện nút Tab & Nhãn Tên Khu to ở góc trái
       document.getElementById('tab-zone1').classList.toggle('active', zoneId === 1);
       document.getElementById('tab-zone2').classList.toggle('active', zoneId === 2);
       document.getElementById('zone-display-title').innerText = `Khu ${zoneId}`;
 
-      // 2. Đóng card chi tiết phòng
       document.getElementById('detail-card').classList.remove('active');
       if (selectedMesh) {
         selectedMesh.material.color.setHex(0xd1d5db);
         selectedMesh = null;
       }
 
-      // 3. Hiệu ứng mờ đục Canvas
       container.classList.add('fading');
 
-      // 4. Hiệu ứng Xoay nhẹ Tòa Nhà qua lại
       const startRot = buildingGroup.rotation.y;
-      const targetRot = zoneId === 2 ? 0.35 : 0; // Xoay 1 góc nhẹ khi sang Khu 2
+      const targetRot = zoneId === 2 ? 0.35 : 0; 
       const startTime = performance.now();
 
       function animateTransition(now) {
@@ -559,17 +697,20 @@
       const intersects = raycaster.intersectObjects(interactiveMeshes);
 
       if (intersects.length > 0) {
-        document.body.style.cursor = 'pointer';
         const hit = intersects[0].object;
-
-        if (hoveredMesh !== hit) {
-          if (hoveredMesh && hoveredMesh !== selectedMesh) {
-            hoveredMesh.material.color.setHex(0xd1d5db);
+        if (!hit.userData.filteredOut) {
+          document.body.style.cursor = 'pointer';
+          if (hoveredMesh !== hit) {
+            if (hoveredMesh && hoveredMesh !== selectedMesh) {
+              hoveredMesh.material.color.setHex(0xd1d5db);
+            }
+            hoveredMesh = hit;
+            if (hoveredMesh !== selectedMesh) {
+              hoveredMesh.material.color.setHex(0x93c5fd);
+            }
           }
-          hoveredMesh = hit;
-          if (hoveredMesh !== selectedMesh) {
-            hoveredMesh.material.color.setHex(0x93c5fd);
-          }
+        } else {
+          document.body.style.cursor = 'default';
         }
       } else {
         document.body.style.cursor = 'default';
@@ -586,6 +727,7 @@
 
       if (intersects.length > 0) {
         const hit = intersects[0].object;
+        if (hit.userData.filteredOut) return;
 
         if (selectedMesh) {
           selectedMesh.material.color.setHex(0xd1d5db);

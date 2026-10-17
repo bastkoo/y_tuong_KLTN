@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cư xá - 165 Trần Phú & Hệ Thống Quản Lý Phòng 3D</title>
-    <!-- Font chữ Montserrat & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Cư xá - 126 Trần Phú & Hệ Thống Quản Lý Phòng 3D</title>
+    <!-- Font chữ Serif Playfair Display cho Title & Montserrat cho UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Import Three.js & OrbitControls -->
@@ -33,14 +33,18 @@
             overflow-y: auto;
         }
 
-        /* ===== SECTION 1: LANDING PAGE HEADER & HERO ===== */
+        /* ===== SECTION 1: HERO SECTION ===== */
         #hero-section {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
+        /* TỐI ƯU HÓA PHẦN CỨNG CHO VIDEO NỀN ĐỂ HẾT GIẬT LAG */
         .video-background {
             position: absolute;
             top: 0;
@@ -48,15 +52,18 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            /* Tăng tốc phần cứng cho Video Background */
             will-change: transform;
             transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            pointer-events: none;
         }
 
         .video-background video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transform: translateZ(0);
         }
 
         .video-overlay {
@@ -65,389 +72,337 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.45);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.25) 50%, rgba(15, 23, 42, 0.65) 100%);
             z-index: 2;
-            pointer-events: none; /* Tránh cản trở rendering */
-        }
-
-        /* ===== MODERN FLOATING GLASS HEADER ===== */
-        .navbar-wrapper {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 1200px;
-            z-index: 1000;
-            will-change: transform;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 28px;
-            background: rgba(15, 23, 42, 0.88); /* Dùng màu phủ tĩnh nhẹ nhàng thay cho blur nặng */
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-logo {
-            color: #ffffff;
-            font-size: 1.25rem;
-            font-weight: 900;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            letter-spacing: 1px;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-logo:hover {
-            transform: scale(1.03);
-        }
-
-        .logo-icon-bg {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1rem;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 4px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 8px 20px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-
-        .nav-links a:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.18);
-            transform: translateY(-1px);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nav-phone-btn {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 9px 22px !important;
-            border-radius: 25px;
-            color: #ffffff !important;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-phone-btn i {
-            color: #60a5fa;
-            font-size: 0.9rem;
-        }
-
-        .nav-phone-btn:hover {
-            background: #2563eb !important;
-            border-color: #2563eb;
-            color: #ffffff !important;
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .nav-phone-btn:hover i {
-            color: #ffffff;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #fff;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .mobile-menu-btn:active {
-            transform: scale(0.92);
-        }
-
-        /* MOBILE DROPDOWN MENU - TỐI ƯU SIÊU MƯỢT */
-        .mobile-dropdown {
-            display: none;
-            position: absolute;
-            top: calc(100% + 12px);
-            right: 0;
-            width: 220px;
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            flex-direction: column;
-            gap: 6px;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.2s ease, transform 0.2s ease;
             pointer-events: none;
         }
 
-        .mobile-dropdown.open {
+        /* ===== FIXED HEADER VỚI HIỆU ỨNG MỜ KÍNH NHẸ NHÀNG KHI CUỘN ===== */
+        .navbar-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 24px 50px;
             display: flex;
-            opacity: 1;
-            transform: translateY(0);
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0);
+            transition: all 0.4s ease;
             pointer-events: auto;
         }
 
-        .mobile-dropdown a {
+        .navbar-top.scrolled {
+            padding: 16px 50px;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-brand-icon {
+            width: 14px;
+            height: 14px;
+            background: #2563eb;
+            transform: rotate(45deg);
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+        }
+
+        .nav-menu-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu-links a {
             color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: background 0.2s ease;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .mobile-dropdown a i {
-            color: #38bdf8;
-            font-size: 1rem;
-            width: 20px;
+        .nav-menu-links a:hover {
+            color: #60a5fa;
         }
 
-        .mobile-dropdown a:hover, .mobile-dropdown a:active {
-            background: rgba(255, 255, 255, 0.15);
+        .btn-access-nav {
+            background: rgba(37, 99, 235, 0.3) !important;
+            border: 1px solid rgba(96, 165, 250, 0.6);
+            color: #ffffff !important;
+            padding: 8px 22px;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+            transition: all 0.3s !important;
+        }
+
+        .btn-access-nav:hover {
+            background: #2563eb !important;
+            border-color: #2563eb;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
+        }
+
+        /* ===== HAMBURGER MENU CHO MOBILE ===== */
+        .menu-toggle-btn {
+            display: none;
+            background: transparent;
+            border: none;
             color: #ffffff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
         }
 
-        /* MAIN HERO CONTAINER */
-        .main-container {
-            position: relative;
-            z-index: 3;
+        .mobile-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
             width: 100%;
-            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .mobile-dropdown-menu.active {
+            display: flex;
+        }
+
+        .mobile-dropdown-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== MAIN HERO CONTENT WITH REVEAL ANIMATIONS ===== */
+        .hero-main-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 150px 50px 40px 50px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 110px 20px 30px 20px;
+            justify-content: center;
         }
 
-        .header-title {
-            color: #ffffff;
-            font-size: 2.2rem;
+        .tectonic-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(3.2rem, 7.5vw, 6.5rem);
             font-weight: 900;
+            color: #ffffff;
+            line-height: 1.02;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-align: center;
-            background: rgba(15, 23, 42, 0.75);
-            padding: 12px 35px;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            margin-top: 10px;
+            margin-bottom: 35px;
+            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.6);
+            
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.2s;
         }
 
-        /* COMMENT BẤT QUY TẮC */
-        .comments-area {
+        .tectonic-title .line-2 {
+            display: block;
+            margin-left: 14%;
+        }
+
+        .hero-intro-wrapper {
             position: relative;
             width: 100%;
-            max-width: 900px;
-            height: 400px;
-            margin: auto 0;
-            pointer-events: none;
-        }
-
-        .bubble-3d {
-            position: absolute;
-            padding: 18px 32px;
-            border-radius: 30px;
-            background: #a29bfe; 
-            border: 3px solid #6c5ce7;
-            box-shadow: 0 10px 0px #4834d4, 0 15px 25px rgba(0, 0, 0, 0.4);
-            color: #ffffff;
-            font-size: 1.35rem;
-            font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            max-width: 85%;
-            word-wrap: break-word;
-            white-space: normal;
-            line-height: 1.4;
+            max-width: 620px;
+            padding-left: 24px;
+            border-left: 3px solid #2563eb;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
 
             opacity: 0;
-            transform: scale(0.5) rotate(0deg);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
-            will-change: transform, opacity;
+            transform: translateY(40px);
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.5s;
         }
 
-        .bubble-3d::after {
-            content: '';
-            position: absolute;
-            bottom: -18px;
-            left: 35px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 20px 20px 0 0;
-            border-color: #a29bfe transparent transparent transparent;
-            filter: drop-shadow(0px 3px 0px #4834d4);
+        .hero-intro-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.05rem;
+            line-height: 1.65;
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
         }
 
-        .bubble-3d.show {
-            opacity: 1;
-            transform: scale(1) rotate(var(--rot, 0deg));
-        }
-
-        .bubble-3d.shake-drop {
-            animation: shakeAndDrop 0.5s forwards ease-in;
-        }
-
-        @keyframes shakeAndDrop {
-            0% { transform: scale(1) rotate(0deg); }
-            30% { transform: scale(1.05) rotate(-5deg); }
-            60% { transform: scale(1) rotate(5deg); }
-            100% { 
-                opacity: 0;
-                transform: translateY(50px) scale(0.8) rotate(10deg);
-            }
-        }
-
-        /* ===== ACTION BUTTONS TỐI ƯU HIỆU NĂNG ===== */
         .action-buttons {
             display: flex;
             gap: 18px;
-            width: 100%;
-            max-width: 620px;
-            justify-content: center;
-            margin-bottom: 12px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .btn-wrapper {
-            flex: 1;
+        .btn-tectonic-blue {
+            position: relative;
+            padding: 16px 32px;
+            background: rgba(224, 242, 254, 0.9);
+            color: #1d4ed8;
+            font-size: 0.88rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: 1.5px solid #3b82f6;
+            cursor: pointer;
+            text-decoration: none;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-tectonic-blue:hover {
+            background: #ffffff;
+            color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-tectonic-grey {
+            position: relative;
+            padding: 16px 32px;
+            background: #cfd8dc;
+            color: #111827;
+            font-size: 0.88rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-tectonic-grey:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255, 255, 255, 0.35);
+        }
+
+        .scroll-indicator {
+            position: relative;
+            z-index: 10;
+            margin-left: 50px;
+            margin-bottom: 25px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
+            gap: 10px;
+
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+            animation-delay: 0.8s;
         }
 
-        .btn {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 16px 24px;
-            border-radius: 50px;
+        .scroll-line {
+            width: 2px;
+            height: 35px;
+            background: #3b82f6;
+        }
+
+        .scroll-text {
+            color: #60a5fa;
+            font-size: 0.72rem;
             font-weight: 800;
-            font-size: 0.95rem;
-            text-decoration: none;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-            cursor: pointer;
+        }
+
+        /* ===== THANH CHỮ TRÔI NGANG (MARQUEE TICKER) ===== */
+        .ticker-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            background: #1d4ed8;
+            padding: 14px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ticker-track {
+            display: inline-flex;
+            gap: 0;
+            animation: marquee 22s linear infinite;
             will-change: transform;
         }
 
-        /* Nút Đặt phòng: Xanh dương đậm đà, phẳng mượt */
-        .btn-booking {
-            background: #2563eb;
+        .ticker-item {
             color: #ffffff;
-            border: 1px solid #60a5fa;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+            font-size: 0.95rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 20px;
         }
 
-        .btn-booking i {
-            color: #bfdbfe;
-            font-size: 1.1rem;
-            transition: transform 0.25s ease;
+        .ticker-dot {
+            color: #93c5fd;
+            margin: 0 18px;
+            font-size: 0.8rem;
         }
 
-        .btn-booking:hover {
-            background: #1d4ed8;
-            border-color: #ffffff;
-            transform: translateY(-3px);
-            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.55);
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
-        /* Nút Xem địa chỉ: Tone tối đồng bộ Header, đằm chắc */
-        .btn-location {
-            background: rgba(15, 23, 42, 0.85);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        .btn-location i {
-            color: #38bdf8;
-            font-size: 1.1rem;
-            transition: transform 0.25s ease;
-        }
-
-        .btn-location:hover {
-            background: rgba(30, 41, 59, 0.95);
-            border-color: #ffffff;
-            transform: translateY(-3px);
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn:hover i {
-            transform: scale(1.15);
-        }
-
-        .btn:active {
-            transform: translateY(1px) scale(0.98);
-        }
-
-        .btn-subtext {
-            margin-top: 8px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ===== SECTION 2: 3D ROOM MANAGEMENT SYSTEM ===== */
@@ -459,25 +414,150 @@
             overflow: hidden;
         }
 
+        /* NHÃN KHU VỰC BÊN PHẢI */
         .zone-title-badge {
             position: absolute;
-            top: 75px;
-            left: 32px;
+            top: 50px;
+            right: 32px;
             background: rgba(255, 255, 255, 0.95);
             padding: 10px 24px;
             border-radius: 18px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
             border: 2px solid #2563eb;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 900;
             color: #1e293b;
             letter-spacing: 0.5px;
             z-index: 10;
         }
 
+        /* NÚT BẬT TẮT LỌC GIÁ Ở BÊN TRÁI */
+        .filter-toggle-btn {
+            position: absolute;
+            top: 50px;
+            left: 32px;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .filter-toggle-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* BẢNG LỌC GIÁ XỔ RA */
+        .price-filter-panel {
+            position: absolute;
+            top: 145px;
+            left: 32px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 16px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 220px;
+            
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .price-filter-panel.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .filter-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .filter-btn {
+            padding: 8px 14px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .filter-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .filter-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        /* --- DẢI LỤA CHÉO GÓC DƯỚI BÊN TRÁI --- */
+        .ribbon-container {
+            position: absolute;
+            bottom: 40px;
+            left: -60px;
+            width: 320px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: rotate(45deg);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-top: 2px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        .ribbon-track {
+            display: flex;
+            white-space: nowrap;
+            animation: ribbonScroll 8s linear infinite;
+        }
+
+        .ribbon-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-right: 30px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes ribbonScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* THANH CHUYỂN KHU NẰM CHÍNH GIỮA */
         .header-tabs {
             position: absolute;
-            top: 75px;
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.95);
@@ -491,11 +571,11 @@
         }
 
         .tab-btn {
-            padding: 8px 26px;
+            padding: 8px 24px;
             border-radius: 30px;
             border: none;
             background: transparent;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #64748b;
             cursor: pointer;
@@ -666,7 +746,7 @@
             transform: scale(0.98);
         }
 
-        /* ===== SECTION 3: BẢN ĐỒ GHÉ THĂM CHÚNG TÔI ===== */
+        /* ===== SECTION 3: BẢN ĐỒ GOOGLE MAPS ===== */
         #location-section {
             width: 100vw;
             min-height: 100vh;
@@ -744,54 +824,194 @@
             box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3);
         }
 
-        /* RESPONSIVE MOBILE */
+        /* ===== FOOTER THEO MẪU ===== */
+        .site-footer {
+            background-color: #06090f;
+            color: #94a3b8;
+            padding: 80px 50px 30px 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .footer-brand-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .footer-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #ffffff;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .footer-logo-hex {
+            width: 22px;
+            height: 22px;
+            background: #3b82f6;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+        }
+
+        .footer-desc {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #94a3b8;
+            max-width: 420px;
+        }
+
+        .footer-links-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-col-title {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .footer-links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links-list a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links-list a:hover {
+            color: #60a5fa;
+        }
+
+        .footer-divider-line {
+            max-width: 1280px;
+            margin: 60px auto 30px auto;
+            height: 1px;
+            background: rgb(113, 113, 113);
+        }
+
+        .footer-bottom-flex {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: #64748b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* ===== RESPONSIVE MOBILE TỐI ƯU ===== */
         @media (max-width: 850px) {
-            .navbar-wrapper {
-                top: 12px;
-                width: 95%;
+            .site-footer {
+                padding: 50px 20px 20px 20px;
             }
-            .navbar {
-                padding: 10px 18px;
+            .footer-content-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
             }
-            .nav-links {
-                display: none;
+            .footer-bottom-flex {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
             }
-            .mobile-menu-btn {
-                display: flex;
+            .navbar-top {
+                padding: 18px 20px;
             }
-            .nav-logo {
-                font-size: 1.05rem;
+            .navbar-top.scrolled {
+                padding: 14px 20px;
             }
-            .header-title {
-                font-size: 1.3rem;
-                padding: 10px 20px;
+            .nav-menu-links {
+                display: none !important; /* Ẩn menu ngang trên mobile */
             }
-            .comments-area {
-                height: 340px;
+            .menu-toggle-btn {
+                display: block !important; /* Hiện nút 3 vạch trên mobile */
             }
-            .bubble-3d {
-                font-size: 1rem;
-                padding: 14px 22px;
-                max-width: 90%;
+            .hero-main-content {
+                padding: 120px 20px 30px 20px;
+            }
+            .tectonic-title {
+                font-size: 2.5rem;
+            }
+            .tectonic-title .line-2 {
+                margin-left: 0;
             }
             .action-buttons {
                 flex-direction: column;
-                gap: 12px;
-                max-width: 100%;
+                width: 100%;
             }
-            .btn {
-                padding: 14px 20px;
-                font-size: 0.88rem;
+            .btn-tectonic-blue, .btn-tectonic-grey {
+                width: 100%;
+                justify-content: center;
             }
+            .scroll-indicator {
+                display: none;
+            }
+
             .zone-title-badge {
-                top: 70px;
-                left: 15px;
-                font-size: 18px;
-                padding: 8px 16px;
+                top: 40px;
+                right: 12px;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 12px;
             }
+
+            .filter-toggle-btn {
+                top: 40px;
+                left: 12px;
+                padding: 8px 12px;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+            .filter-toggle-btn .filter-btn-text {
+                display: none;
+            }
+
+            .price-filter-panel {
+                top: 120px;
+                left: 12px;
+                min-width: 190px;
+                padding: 12px;
+            }
+
             .header-tabs {
-                top: 70px;
+                top: 38px;
+                padding: 3px;
             }
+
+            .tab-btn {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+
             #detail-card {
                 right: 5%;
                 width: 90%;
@@ -807,78 +1027,86 @@
 </head>
 <body>
 
-    <!-- SECTION 1: LANDING PAGE GIAO DIỆN CHÍNH -->
+    <!-- SECTION 1: HERO SECTION -->
     <section id="hero-section">
-        <!-- NAVIGATION HEADER CONTAINER -->
-        <div class="navbar-wrapper">
-            <nav class="navbar">
-                <a href="#" class="nav-logo">
-                    <div class="logo-icon-bg">
-                        <i class="fa-solid fa-building"></i>
-                    </div>
-                    <span>CƯ XÁ 165</span>
-                </a>
-                
-                <!-- NAVIGATION LINKS DÀNH CHO DESKTOP -->
-                <ul class="nav-links">
-                    <li><a href="javascript:void(0)" onclick="scrollToBooking()">Sơ Đồ 3D</a></li>
-                    <li><a href="javascript:void(0)" onclick="scrollToLocation()">Địa Chỉ</a></li>
-                </ul>
-
-                <div class="nav-actions">
-                    <a href="tel:0901234567" class="nav-phone-btn">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>0901.234.567</span>
-                    </a>
-                    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu(event)">
-                        <i class="fa-solid fa-bars" id="menuIcon"></i>
-                    </button>
-                </div>
-
-                <!-- MENU XỔ XUỐNG DÀNH CHO MOBILE -->
-                <div class="mobile-dropdown" id="mobileDropdown">
-                    <a href="javascript:void(0)" onclick="scrollToBooking(); closeMobileMenu();">
-                        <i class="fa-solid fa-cube"></i> Sơ Đồ 3D
-                    </a>
-                    <a href="javascript:void(0)" onclick="scrollToLocation(); closeMobileMenu();">
-                        <i class="fa-solid fa-location-dot"></i> Xem Địa Chỉ
-                    </a>
-                    <a href="tel:0901234567" onclick="closeMobileMenu();">
-                        <i class="fa-solid fa-phone"></i> Gọi Hotline
-                    </a>
-                </div>
-            </nav>
-        </div>
-
-        <!-- VIDEO NỀN -->
         <div class="video-background">
-            <video autoplay loop muted playsinline id="bgVideo">
+            <video autoplay loop muted playsinline preload="auto" id="bgVideo">
                 <source src="review_pt.mp4" type="video/mp4">
             </video>
             <div class="video-overlay"></div>
         </div>
 
-        <!-- MAIN CONTAINER CONTENT -->
-        <div class="main-container">
-            <h1 class="header-title">Cư xá - 165 Trần Phú</h1>
+        <nav class="navbar-top" id="mainNavbar">
+            <a href="#" class="nav-brand">
+                <span class="nav-brand-icon"></span>
+                <span>CƯ XÁ 126</span>
+            </a>
 
-            <!-- AREA COMMENT BẤT QUY TẮC -->
-            <div class="comments-area" id="commentsArea"></div>
+            <!-- Menu cho Desktop -->
+            <ul class="nav-menu-links">
+                <li><a href="javascript:void(0)" onclick="scrollToBooking()">Thuê phòng</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToLocation()">Địa Chỉ</a></li>
+                <li><a href="#" class="btn-access-nav">Đăng nhập</a></li>
+            </ul>
 
-            <!-- ACTION BUTTONS ĐÃ THIẾT KẾ LẠI & TỐI ƯU HIỆU NĂNG -->
-            <div class="action-buttons">
-                <div class="btn-wrapper">
-                    <button onclick="scrollToBooking()" class="btn btn-booking">
-                        <i class="fa-solid fa-cube"></i> Đặt Phòng Ngay
+            <!-- Nút 3 vạch cho Mobile -->
+            <button class="menu-toggle-btn" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-bars" id="menuIcon"></i>
+            </button>
+
+            <!-- Hộp tùy chọn xổ xuống trên Mobile -->
+            <div class="mobile-dropdown-menu" id="mobileDropdown">
+                <a href="javascript:void(0)" onclick="scrollToBooking(); toggleMobileMenu();">Thuê phòng</a>
+                <a href="javascript:void(0)" onclick="scrollToLocation(); toggleMobileMenu();">Địa Chỉ</a>
+                <a href="#" class="btn-access-nav" style="text-align: center; margin-top: 5px;">Đăng nhập</a>
+            </div>
+        </nav>
+
+        <div class="hero-main-content">
+            <h1 class="tectonic-title">
+                CƯ XÁ<br>
+                <span class="line-2">126 TRẦN PHÚ</span>
+            </h1>
+
+            <div class="hero-intro-wrapper">
+                <p class="hero-intro-text">
+                    Hệ thống ký túc xá cao cấp tại 126 Trần Phú. Môi trường sống văn minh, an ninh 24/7, đầy đủ tiện nghi hiện đại cho sinh viên và người đi làm cùng trải nghiệm quản lý phòng 3D trực quan.
+                </p>
+                <div class="action-buttons">
+                    <button onclick="scrollToBooking()" class="btn-tectonic-blue">
+                        THUÊ PHÒNG
                     </button>
-                    <span class="btn-subtext">⚡ Trải nghiệm chọn phòng trên mô hình 3D</span>
+                    <button onclick="scrollToLocation()" class="btn-tectonic-grey">
+                        XEM BẢN ĐỒ
+                    </button>
                 </div>
+            </div>
+        </div>
 
-                <div class="btn-wrapper">
-                    <button onclick="scrollToLocation()" class="btn btn-location">
-                        <i class="fa-solid fa-location-dot"></i> Xem Địa Chỉ
-                    </button>
-                    <span class="btn-subtext">📍 165 Trần Phú - Chỉ đường Maps</span>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span class="scroll-text">SCROLL DOWN</span>
+        </div>
+
+        <div class="ticker-wrapper">
+            <div class="ticker-track">
+                <div class="ticker-item">
+                    <span>PHÒNG TRỌ GIÁ RẺ</span> <span class="ticker-dot">•</span>
+                    <span>TIỆN ÍCH ĐẦY ĐỦ</span> <span class="ticker-dot">•</span>
+                    <span>AN NINH 24/7</span> <span class="ticker-dot">•</span>
+                    <span>GIỜ GIẤC TỰ DO</span> <span class="ticker-dot">•</span>
+                    <span>ĐIỆN NƯỚC GIÁ DÂN</span> <span class="ticker-dot">•</span>
+                    <span>KHÔNG CHUNG CHỦ</span> <span class="ticker-dot">•</span>
+                    <span>WIFI TỐC ĐỘ CAO</span> <span class="ticker-dot">•</span>
+                </div>
+                <div class="ticker-item">
+                    <span>PHÒNG TRỌ GIÁ RẺ</span> <span class="ticker-dot">•</span>
+                    <span>TIỆN ÍCH ĐẦY ĐỦ</span> <span class="ticker-dot">•</span>
+                    <span>AN NINH 24/7</span> <span class="ticker-dot">•</span>
+                    <span>GIỜ GIẤC TỰ DO</span> <span class="ticker-dot">•</span>
+                    <span>ĐIỆN NƯỚC GIÁ DÂN</span> <span class="ticker-dot">•</span>
+                    <span>KHÔNG CHUNG CHỦ</span> <span class="ticker-dot">•</span>
+                    <span>WIFI TỐC ĐỘ CAO</span> <span class="ticker-dot">•</span>
                 </div>
             </div>
         </div>
@@ -887,6 +1115,27 @@
     <!-- SECTION 2: MÔ HÌNH PHÒNG TRỌ 3D -->
     <section id="booking-3d-section">
         <div class="zone-title-badge" id="zone-display-title">Khu 1</div>
+
+        <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
+            <i class="fa-solid fa-filter"></i> <span class="filter-btn-text">Lọc giá phòng</span>
+        </button>
+
+        <div class="price-filter-panel" id="priceFilterPanel">
+            <div class="filter-title">Chọn mức giá</div>
+            <button class="filter-btn active" id="filter-all" onclick="filterByPrice('all')">Tất cả mức giá</button>
+            <button class="filter-btn" id="filter-p1" onclick="filterByPrice('under1m')">Dưới 1.000.000đ</button>
+            <button class="filter-btn" id="filter-p2" onclick="filterByPrice('1m-2m')">1.000.000đ -> 2.000.000đ</button>
+            <button class="filter-btn" id="filter-p3" onclick="filterByPrice('2m-3m')">2.000.000đ -> 3.000.000đ</button>
+        </div>
+
+        <div class="ribbon-container">
+            <div class="ribbon-track">
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+                <span class="ribbon-text">CƯ XÁ 126 TRẦN PHÚ &nbsp;&bull;&nbsp;</span>
+            </div>
+        </div>
 
         <div class="header-tabs">
             <button class="tab-btn active" id="tab-zone1" onclick="switchZone(1)">Khu 1</button>
@@ -933,63 +1182,97 @@
     <!-- SECTION 3: BẢN ĐỒ GOOGLE MAPS -->
     <section id="location-section">
         <h2 class="location-title">GHÉ THĂM CHÚNG TÔI</h2>
-        <p class="location-address">165 Trần Phú, Phường Phước Vĩnh, TP. Huế</p>
+        <p class="location-address">126 Trần Phú, Phường Phước Vĩnh, TP. Huế</p>
 
         <div class="map-wrapper">
             <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.33120194851!2d107.58129037583626!3d16.4586938289069!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a13437e6b063%3A0xb695e20609351df9!2zMTY1IFRyw6duIFBoxConstantLCBQaMaw4bubYyBWxKluaCwgVGjDoG5oIHBo4buRIEh14bq_LCBUaOG7q2EgVGhpw6puIEh14bq_!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.33120194851!2d107.58129037583626!3d16.4586938289069!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a13437e6b063%3A0xb695e20609351df9!2zMTI2IFRyw6duIFBoxConstantLCBQaMaw4bubYyBWxKluaCwgVGjDoG5oIHBo4buRIEh14bq_LCBUaOG7q2EgVGhpw6puIEh14bq_!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" 
                 allowfullscreen="" 
                 loading="lazy" 
                 referrerpolicy="no-referrer-when-downgrade">
             </iframe>
         </div>
 
-        <a href="https://www.google.com/maps/search/?api=1&query=165+Trần+Phú,+Phước+Vĩnh,+TP+Huế" target="_blank" class="map-external-btn">
+        <a href="https://www.google.com/maps/search/?api=1&query=126+Trần+Phú,+Phước+Vĩnh,+TP+Huế" target="_blank" class="map-external-btn">
             XEM BẢN ĐỒ LỚN HƠN <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
     </section>
 
+    <footer class="site-footer">
+        <div class="footer-content-grid">
+            <div class="footer-brand-col">
+                <a href="#" class="footer-logo-wrap">
+                    <span class="footer-logo-hex"></span>
+                    <span>CƯ XÁ 126</span>
+                </a>
+                <p class="footer-desc">
+                    Hệ thống quản lý không gian sống hiện đại, kiến tạo môi trường trọ văn minh, an toàn và tiện nghi tối ưu cho sinh viên cũng như người đi làm.
+                </p>
+            </div>
+
+            <div class="footer-links-col">
+                <h4 class="footer-col-title">Khu vực</h4>
+                <ul class="footer-links-list">
+                    <li><a href="javascript:void(0)" onclick="switchZone(1)">126 Trần Phú - TP Huế</a></li>
+                    <li><a href="javascript:void(0)" onclick="scrollToBooking()">Thuê phòng</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-col">
+                <h4 class="footer-col-title">Kết nối</h4>
+                <ul class="footer-links-list">
+                    <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
+                    <li><a href="tel:0901234567">Hotline: 0981 635 875</a></li>
+                    <li><a href="mailto:contact@cuxa126.vn">Email: vntrung981@gmail.com</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-divider-line"></div>
+
+        <div class="footer-bottom-flex">
+            <span>© 2027 CƯ XÁ 126 TRẦN PHÚ. ALL RIGHTS RESERVED.</span>
+            <span>EST. 2027 • Một sản phẩm của Quốc Đạt</span>
+        </div>
+    </footer>
+
     <!-- SCRIPT TỔNG HỢP -->
     <script>
-        // --- 1. SỰ KIỆN XỔ DROPDOWN MENU MOBILE ---
-        function toggleMobileMenu(e) {
-            e.stopPropagation();
+        // Điều khiển mở/đóng menu mobile
+        function toggleMobileMenu() {
             const dropdown = document.getElementById('mobileDropdown');
-            const icon = document.getElementById('menuIcon');
+            const menuIcon = document.getElementById('menuIcon');
             
-            const isOpen = dropdown.classList.contains('open');
-            if (isOpen) {
-                closeMobileMenu();
+            dropdown.classList.toggle('active');
+            
+            if (dropdown.classList.contains('active')) {
+                menuIcon.className = "fa-solid fa-xmark";
             } else {
-                dropdown.classList.add('open');
-                icon.className = 'fa-solid fa-xmark';
+                menuIcon.className = "fa-solid fa-bars";
             }
         }
 
-        function closeMobileMenu() {
-            const dropdown = document.getElementById('mobileDropdown');
-            const icon = document.getElementById('menuIcon');
-            if (dropdown) dropdown.classList.remove('open');
-            if (icon) icon.className = 'fa-solid fa-bars';
+        function toggleFilterPanel() {
+            const panel = document.getElementById('priceFilterPanel');
+            panel.classList.toggle('show');
         }
 
-        // Đóng menu khi bấm ra ngoài
-        document.addEventListener('click', (e) => {
-            const dropdown = document.getElementById('mobileDropdown');
-            const btn = document.getElementById('mobileMenuBtn');
-            if (dropdown && dropdown.classList.contains('open')) {
-                if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-                    closeMobileMenu();
-                }
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('mainNavbar');
+            const heroHeight = document.getElementById('hero-section').offsetHeight;
+
+            if (window.scrollY > heroHeight - 80) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
             }
         });
 
-        // --- 2. HÀM CUỘN CHÍNH XÁC ---
         function scrollToBooking() {
             const bookingSection = document.getElementById('booking-3d-section');
             const elementPosition = bookingSection.getBoundingClientRect().top + window.pageYOffset;
             window.scrollTo({
-                top: elementPosition,
+                top: elementPosition - 50,
                 behavior: 'smooth'
             });
         }
@@ -1003,69 +1286,6 @@
             });
         }
 
-        // --- 3. JAVASCRIPT COMMENT CHẠY NGẪU NHIÊN ---
-        const messages = [
-            "Trọ giá siêu hợp lý 💵",
-            "Không gian rộng rãi, thoáng mát 🌿",
-            "Chỗ để xe rộng rãi, an ninh 🛵",
-            "Tiện nghi đầy đủ: Điều hòa, Tủ lạnh... 🛋️",
-            "Giờ giấc tự do, không chung chủ 🔑",
-            "Vị trí đắc địa 165 Trần Phú 📍",
-            "Wifi tốc độ cao, điện nước giá dân ⚡"
-        ];
-
-        const randomPositions = [
-            { top: '5%',  left: '5%',   rotate: '-4deg' },
-            { top: '12%', left: '46%',  rotate: '5deg'  },
-            { top: '40%', left: '10%',  rotate: '3deg'  },
-            { top: '45%', left: '50%',  rotate: '-5deg' },
-            { top: '70%', left: '6%',   rotate: '-2deg' },
-            { top: '72%', left: '44%',  rotate: '4deg'  }
-        ];
-
-        const area = document.getElementById('commentsArea');
-        const MAX_ON_SCREEN = 4;
-        let activeBubbles = [];
-        let msgIndex = 0;
-        let posIndex = 0;
-
-        function spawnComment() {
-            if (!area) return;
-            if (activeBubbles.length >= MAX_ON_SCREEN) {
-                const oldestBubble = activeBubbles.shift();
-                oldestBubble.classList.remove('show');
-                oldestBubble.classList.add('shake-drop');
-                
-                setTimeout(() => {
-                    oldestBubble.remove();
-                }, 500);
-            }
-
-            const text = messages[msgIndex];
-            const pos = randomPositions[posIndex];
-
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble-3d';
-            bubble.innerText = text;
-            
-            bubble.style.top = pos.top;
-            bubble.style.left = pos.left;
-            bubble.style.setProperty('--rot', pos.rotate);
-
-            area.appendChild(bubble);
-            activeBubbles.push(bubble);
-
-            setTimeout(() => {
-                bubble.classList.add('show');
-            }, 50);
-
-            msgIndex = (msgIndex + 1) % messages.length;
-            posIndex = (posIndex + 1) % randomPositions.length;
-
-            setTimeout(spawnComment, 2000); // Tăng thời gian giãn cách animation để mượt máy hơn
-        }
-
-        // --- 4. THREE.JS SCENE SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0xe6f0fa);
@@ -1096,7 +1316,6 @@
         controls.maxDistance = 110;
         controls.target.set(0, 11.5, 0);
 
-        // LIGHTING
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
         scene.add(ambientLight);
 
@@ -1105,7 +1324,6 @@
         sunLight.castShadow = true;
         scene.add(sunLight);
 
-        // GROUND
         const groundGeo = new THREE.PlaneGeometry(180, 180);
         const groundMat = new THREE.MeshStandardMaterial({ color: 0xebf2f7, roughness: 0.8 });
         const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -1114,7 +1332,6 @@
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // BUILDING STRUCTURE
         const buildingGroup = new THREE.Group();
 
         const bodyGeo = new THREE.BoxGeometry(buildingWidth, buildingHeight, buildingDepth);
@@ -1177,8 +1394,8 @@
 
         scene.add(buildingGroup);
 
-        // QUẢN LÝ KHU VỰC VÀ TẢI PHÒNG
         let currentZone = 1;
+        let currentPriceFilter = 'all';
         let interactiveMeshes = [];
         let currentSelectedRoomId = null;
 
@@ -1190,12 +1407,14 @@
                     const roomId = `P${f}${roomNumStr}`;
                     
                     const isAvailable = zoneId === 1 ? ((f + r) % 3 === 0) : ((f + r * 2) % 4 === 0);
+                    const rawPrice = 800000 + ((f * 150000 + r * 75000) % 2200000);
 
                     dataMap[roomId] = {
                         floor: `Tầng ${f} - Khu ${zoneId}`,
                         status: isAvailable ? 'Đang trống' : 'Đã thuê',
                         area: zoneId === 1 ? '25 m²' : '30 m²',
-                        price: `${(zoneId === 1 ? 2300000 : 2800000) + f * 100000}đ`,
+                        priceNum: rawPrice,
+                        price: rawPrice.toLocaleString('vi-VN') + 'đ',
                         type: r % 2 === 0 ? 'Phòng đôi' : 'Phòng đơn',
                         furniture: isAvailable ? 'Đầy đủ' : 'Cơ bản',
                         available: isAvailable
@@ -1217,12 +1436,26 @@
                     const roomId = `P${f + 1}${roomNumStr}`;
                     const data = currentZoneData[roomId];
                     
+                    let matchesPriceFilter = true;
+                    if (currentPriceFilter === 'under1m') {
+                        matchesPriceFilter = data.priceNum < 1000000;
+                    } else if (currentPriceFilter === '1m-2m') {
+                        matchesPriceFilter = data.priceNum >= 1000000 && data.priceNum <= 2000000;
+                    } else if (currentPriceFilter === '2m-3m') {
+                        matchesPriceFilter = data.priceNum > 2000000 && data.priceNum <= 3000000;
+                    }
+
                     const x = (r - (roomsPerFloor - 1) / 2) * roomWidth;
                     const y = f * roomHeight + roomHeight / 2;
                     const z = buildingDepth / 2 + 0.05;
 
                     const roomFrameGeo = new THREE.PlaneGeometry(roomWidth - 0.5, roomHeight - 0.6);
-                    const roomFrameMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, side: THREE.DoubleSide });
+                    const roomFrameMat = new THREE.MeshStandardMaterial({ 
+                        color: matchesPriceFilter ? 0xd1d5db : 0x9ca3af, 
+                        transparent: true,
+                        opacity: matchesPriceFilter ? 1.0 : 0.25,
+                        side: THREE.DoubleSide 
+                    });
                     const roomMesh = new THREE.Mesh(roomFrameGeo, roomFrameMat);
                     roomMesh.position.set(x, y, z);
 
@@ -1231,7 +1464,7 @@
                     canvas.height = 180;
                     const ctx = canvas.getContext('2d');
 
-                    ctx.fillStyle = '#1e293b';
+                    ctx.fillStyle = matchesPriceFilter ? '#1e293b' : '#64748b';
                     ctx.beginPath();
                     ctx.roundRect(10, 10, canvas.width - 20, canvas.height - 20, 24);
                     ctx.fill();
@@ -1269,12 +1502,12 @@
 
                     const texture = new THREE.CanvasTexture(canvas);
                     const btnGeo = new THREE.PlaneGeometry(3.6, 1.8);
-                    const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                    const btnMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: matchesPriceFilter ? 1.0 : 0.25 });
                     const btnMesh = new THREE.Mesh(btnGeo, btnMat);
                     btnMesh.position.set(0, 0, 0.05);
                     
                     roomMesh.add(btnMesh);
-                    roomMesh.userData = { id: roomId, data: data };
+                    roomMesh.userData = { id: roomId, data: data, filteredOut: !matchesPriceFilter };
 
                     interactiveMeshes.push(roomMesh);
                     buildingGroup.add(roomMesh);
@@ -1284,7 +1517,23 @@
 
         buildRoomButtons();
 
-        // CHUYỂN KHU
+        window.filterByPrice = function(filterType) {
+            currentPriceFilter = filterType;
+            
+            document.getElementById('filter-all').classList.toggle('active', filterType === 'all');
+            document.getElementById('filter-p1').classList.toggle('active', filterType === 'under1m');
+            document.getElementById('filter-p2').classList.toggle('active', filterType === '1m-2m');
+            document.getElementById('filter-p3').classList.toggle('active', filterType === '2m-3m');
+
+            document.getElementById('detail-card').classList.remove('active');
+            if (selectedMesh) {
+                selectedMesh.material.color.setHex(0xd1d5db);
+                selectedMesh = null;
+            }
+
+            buildRoomButtons();
+        };
+
         let isTransitioning = false;
 
         window.switchZone = function(zoneId) {
@@ -1328,7 +1577,6 @@
             }, 150);
         };
 
-        // EVENT INTERACTION PHÒNG 3D
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         let hoveredMesh = null;
@@ -1346,17 +1594,20 @@
             const intersects = raycaster.intersectObjects(interactiveMeshes);
 
             if (intersects.length > 0) {
-                document.body.style.cursor = 'pointer';
                 const hit = intersects[0].object;
-
-                if (hoveredMesh !== hit) {
-                    if (hoveredMesh && hoveredMesh !== selectedMesh) {
-                        hoveredMesh.material.color.setHex(0xd1d5db);
+                if (!hit.userData.filteredOut) {
+                    document.body.style.cursor = 'pointer';
+                    if (hoveredMesh !== hit) {
+                        if (hoveredMesh && hoveredMesh !== selectedMesh) {
+                            hoveredMesh.material.color.setHex(0xd1d5db);
+                        }
+                        hoveredMesh = hit;
+                        if (hoveredMesh !== selectedMesh) {
+                            hoveredMesh.material.color.setHex(0x93c5fd);
+                        }
                     }
-                    hoveredMesh = hit;
-                    if (hoveredMesh !== selectedMesh) {
-                        hoveredMesh.material.color.setHex(0x93c5fd);
-                    }
+                } else {
+                    document.body.style.cursor = 'default';
                 }
             } else {
                 document.body.style.cursor = 'default';
@@ -1367,7 +1618,7 @@
             }
         });
 
-        window.addEventListener('click', (e) => {
+        window.addEventListener('pointerdown', (e) => {
             const rect = renderer.domElement.getBoundingClientRect();
             if (
                 e.clientX < rect.left ||
@@ -1384,6 +1635,7 @@
 
             if (intersects.length > 0) {
                 const hit = intersects[0].object;
+                if (hit.userData.filteredOut) return;
 
                 if (selectedMesh) {
                     selectedMesh.material.color.setHex(0xd1d5db);
@@ -1441,7 +1693,6 @@
         }
 
         window.onload = () => {
-            setTimeout(spawnComment, 500);
             animate();
         };
     </script>
